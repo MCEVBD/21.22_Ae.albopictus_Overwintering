@@ -1,0 +1,7 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+# RAW data files 
+00_Data/01_RAW_Snowdepth/
+00_Data/01_RAW_temperature/
