@@ -13,7 +13,8 @@
 #'      - ABC:         E, W or S ( only at Arl) tire location within location
 #'      - Ambient:     weather station 2m temperature 
 #'      - Tire:        HOBO recorded temperature recorded within the tire
-#'      - Probe:       HOBO recorded temperature in soil 1m from the W tire
+#'      - Tire_b:      HOBO recorded by probe+ monitor, in base of tire 
+#'      - Soil:        HOBO recorded temperature in soil 1m from the W tire
 #'      - Diff:        difference in temp between Ambient and Tire
 #'      - DiffP:       difference between Ambient and Probe
 #'      - DiffPT:      difference between Tire and Probe 
@@ -24,7 +25,7 @@
 #lilbraries
 
 
-# Import raw site files
+######### Import raw site files ##############
 ## RAW files are not included in the git files and version controling 
 
 # Move working directory inside Raw files folder
@@ -38,10 +39,9 @@ for(i in filenames){
 # correct working directory to Project level 
 setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 
-# Add needed variables to files
+######## Add needed variables to files ########
 ## location, number, ABC
 ## fucntion save in 01_FUNCTIONS.R script 
 source('00_Scripts/01_FUNCTIONS.R')
 
-Arl_extSoil <- temp.variable.add(Arl_extSoil, "Arl", "6","W", "4736")
-
+Arl_T1      <- temp.variable.add(Arl_T1, "Arl", "5", "E", "4760")
