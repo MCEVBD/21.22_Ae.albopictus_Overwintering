@@ -45,3 +45,31 @@ setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 source('00_Scripts/01_FUNCTIONS.R')
 
 Arl_T1      <- temp.variable.add(Arl_T1, "Arl", "5", "E", "4760")
+Arl_T3      <- temp.variable.add(Arl_T3, "Arl", "7", "S", "4760")
+Arl_extSoil <- temp.variable.add(Arl_extSoil, "Arl", "6","W", "4736")
+
+Bon_T1      <- temp.variable.add(Bon_T1, "Bon", '10', 'E', '4736')
+Bon_T2      <- temp.variable.add(Bon_T2, "Bon", '11', 'W', '4736')
+Bon_extSoil <- temp.variable.add(Bon_extSoil, "Bon", '11', 'W', '4736')
+
+Car_T1      <- temp.variable.add(Car_T1, 'Car', '12', 'E', '4736')
+Car_T2      <- temp.variable.add(Car_T2, 'Car', '13', 'W', '4736')
+Car_extSoil <- temp.variable.add(Car_extSoil, 'Car', '13', 'W', '4736')
+
+CTR         <- temp.variable.add(CTR, "CTR", 'NA', 'NA', '4760')
+
+Del_T1      <- temp.variable.add(Del_T1, 'Del', '8', 'E', '4736')
+Del_T2      <- temp.variable.add(Del_T2, 'Del', '9', 'W', '4736')
+Del_extSoil <- temp.variable.add(Del_extSoil, 'Del', '9', 'W', '4736')
+
+Han_T1      <- temp.variable.add(Han_T1, 'Han', '3', 'E', '4760')
+Han_T2      <- temp.variable.add(Han_T2, 'Han', '4', 'W', '4760')
+Han_extSoil <- temp.variable.add(Han_extSoil, 'Han', '4', 'W', '4735')
+
+Spo_T1      <- temp.variable.add(Spo_T1, 'Spo', '1', 'E', '4760')
+Spo_T2      <- temp.variable.add(Spo_T2, 'Spo', '2', 'W', '4760')
+Sp_extSoil  <- temp.variable.add(Sp_extSoil, 'Spo', '2', 'W', '4710')
+
+
+
+
