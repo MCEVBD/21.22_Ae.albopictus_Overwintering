@@ -39,6 +39,21 @@ for(i in filenames){
 # correct working directory to Project level 
 setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 
+
+############# Merge soil temperature files with tire files ##########
+# The extsoil montiors are located within the W tire ate each site
+# before adding site specific varaible the Tire, Tire_b and Soil variables will be merged
+# merge dataframes will be stored as (location)_T2, as this is the correct location 
+## again Arl_T2 will not be included as that HOBO monitor falled
+
+Spo_T2 <- merge(Spo_T2,Spo_extSoil,by="DateTime", all = T)
+Han_T2 <- merge(Han_T2,Han_extSoil,by="DateTime", all = T)
+Del_T2 <- merge(Del_T2,Del_extSoil,by="DateTime", all = T)
+Bon_T2 <- merge(Bon_T2,Bon_extSoil,by="DateTime", all = T)
+Car_T2 <- merge(Car_T2,Bon_extSoil,by="DateTime", all = T)
+
+
+
 ######## Add needed variables to files ########
 ## location, number, ABC
 ## fucntion save in 01_FUNCTIONS.R script 
@@ -50,25 +65,20 @@ Arl_extSoil <- temp.variable.add(Arl_extSoil, "Arl", "6","W", "4736")
 
 Bon_T1      <- temp.variable.add(Bon_T1, "Bon", '10', 'E', '4736')
 Bon_T2      <- temp.variable.add(Bon_T2, "Bon", '11', 'W', '4736')
-Bon_extSoil <- temp.variable.add(Bon_extSoil, "Bon", '11', 'W', '4736')
 
 Car_T1      <- temp.variable.add(Car_T1, 'Car', '12', 'E', '4736')
 Car_T2      <- temp.variable.add(Car_T2, 'Car', '13', 'W', '4736')
-Car_extSoil <- temp.variable.add(Car_extSoil, 'Car', '13', 'W', '4736')
 
 CTR         <- temp.variable.add(CTR, "CTR", 'NA', 'NA', '4760')
 
 Del_T1      <- temp.variable.add(Del_T1, 'Del', '8', 'E', '4736')
 Del_T2      <- temp.variable.add(Del_T2, 'Del', '9', 'W', '4736')
-Del_extSoil <- temp.variable.add(Del_extSoil, 'Del', '9', 'W', '4736')
 
 Han_T1      <- temp.variable.add(Han_T1, 'Han', '3', 'E', '4760')
 Han_T2      <- temp.variable.add(Han_T2, 'Han', '4', 'W', '4760')
-Han_extSoil <- temp.variable.add(Han_extSoil, 'Han', '4', 'W', '4735')
 
 Spo_T1      <- temp.variable.add(Spo_T1, 'Spo', '1', 'E', '4760')
 Spo_T2      <- temp.variable.add(Spo_T2, 'Spo', '2', 'W', '4760')
-Sp_extSoil  <- temp.variable.add(Sp_extSoil, 'Spo', '2', 'W', '4710')
 
 
 
