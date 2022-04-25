@@ -10,14 +10,14 @@
 #'      - location:    the 6 study sites
 #'      - number:      1-13, tire number N. to S., E. to W.
 #'      - DateTime:    ymd_hhmmss
-#'      - ABC:         E, W or S ( only at Arl) tire location within location
+#'      - ABC:         E, W or S (only at Arl) tire location within location
 #'      - Ambient:     weather station 2m temperature 
 #'      - Tire:        HOBO recorded temperature recorded within the tire
 #'      - Tire_b:      HOBO recorded by probe+ monitor, in base of tire 
 #'      - Soil:        HOBO recorded temperature in soil 1m from the W tire
 #'      - Diff:        difference in temp between Ambient and Tire
-#'      - DiffP:       difference between Ambient and Probe
-#'      - DiffPT:      difference between Tire and Probe 
+#'      - DiffS:       difference between Ambient and Soil
+#'      - DiffST:      difference between Tire and Soil 
 #'      
 #' Arl_T2 will be exculded from this data tabulation due to a monitor fail    
 
