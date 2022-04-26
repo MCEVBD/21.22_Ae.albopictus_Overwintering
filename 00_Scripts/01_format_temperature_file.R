@@ -3,8 +3,11 @@
 #' 
 #' The following sources are combine into a single temperaure file:
 #'      - 13 HOBO temperature monitors contained with in both tires located at each site 
+#'            - original variables: DateTime, Tire, Tire_RH
 #'      - 06 HOBO monitors with external probe located in the west tires at each site
+#'            - original varaibles: DateTime, Tire_b, Soil
 #'      - 06 hourly weather data files for the weather monitoring stations located at each site
+#'             - original varaibles: 
 #'      
 #' The resulting dataframe is in a "wide" format and contains the following variables:
 #'      - location:    the 6 study sites
@@ -23,7 +26,7 @@
 
 
 #lilbraries
-
+library("plyr")
 
 ######### Import raw site files ##############
 ## RAW files are not included in the git files and version controling 
@@ -80,6 +83,18 @@ Han_T2      <- temp.variable.add(Han_T2, 'Han', '4', 'W', '4760')
 Spo_T1      <- temp.variable.add(Spo_T1, 'Spo', '1', 'E', '4760')
 Spo_T2      <- temp.variable.add(Spo_T2, 'Spo', '2', 'W', '4760')
 
+
+######## R-bind files togauther ########
+
+# plyr::rbind.fill() is used b/c there are unique varaibles in some dfs that need to 
+# be carried through
+Temp <- rbind.fill(CTR,
+                   Arl_T1, Arl_T3, Arl_extSoil,
+                   Bon_T1, Bon_T2,
+                   Car_T1, Car_T2,
+                   Del_T1, Del_T2,
+                   Han_T1, Han_T2,
+                   Spo_T1, Spo_T2)
 
 
 
