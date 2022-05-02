@@ -99,5 +99,40 @@ Temp <- rbind.fill(CTR,
 
 ######### Import raw weather station files ##############
 ## RAW files are not included in the git files and version controling 
+## IL and WI weather stations have differnt file formates so they will handle seperatly 
+
+# add IL stations (Already located in a single file)
+IL_stations <- read.csv("00_Data/01_RAW_temperature/Station/IL_stations.csv")
+
+# add WI stations, currently in 3 files
+
+# Move working directory inside Raw files folder
+setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering/00_Data/01_RAW_temperature/Station/WI_stations")
+# generate list of file names
+filenames <- gsub("\\.csv$","", list.files(pattern="\\.csv$"))
+# Import files
+for(i in filenames){
+  assign(i, read.csv(paste(i, ".csv", sep="")))
+}
+# correct working directory to Project level 
+setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 
 
+############### Add location code to IL stations #############
+IL_stations$location <- "Del"
+IL_stations$location[IL_stations$Station == "Bondville"]  <- "Bon"
+IL_stations$location[IL_stations$Station == "Carbondale"] <- "Car"
+
+
+############ Add location code to WI stations ##########
+
+Arl_station$location <- "Arl"
+Han_station$location <- "Han"
+Spo_station$location <- "Spo"
+
+
+
+
+  
+  
+  
