@@ -97,4 +97,7 @@ Temp <- rbind.fill(CTR,
                    Spo_T1, Spo_T2)
 
 
+######### Import raw weather station files ##############
+## RAW files are not included in the git files and version controling 
+
 
