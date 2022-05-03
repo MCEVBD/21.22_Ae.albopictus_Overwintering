@@ -28,6 +28,7 @@
 #lilbraries
 library(plyr)
 library(lubridate)
+library(dplyr)
 
 ######### Import raw site files ##############
 ## RAW files are not included in the git files and version controling 
@@ -45,7 +46,7 @@ setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 
 
 ############# Merge soil temperature files with tire files ##########
-# The extsoil montiors are located within the W tire ate each site
+# The extsoil montiors are located within the W tire at each site
 # before adding site specific varaible the Tire, Tire_b and Soil variables will be merged
 # merge dataframes will be stored as (location)_T2, as this is the correct location 
 ## again Arl_T2 will not be included as that HOBO monitor falled
@@ -87,8 +88,7 @@ Spo_T2      <- temp.variable.add(Spo_T2, 'Spo', '2', 'W', '4760')
 
 ######## R-bind files togauther ########
 
-# plyr::rbind.fill() is used b/c there are unique varaibles in some dfs that need to 
-# be carried through
+# plyr::rbind.fill() is used b/c there are unique varaibles in some dfs that need to be carried through
 Temp <- rbind.fill(CTR,
                    Arl_T1, Arl_T3, Arl_extSoil,
                    Bon_T1, Bon_T2,
@@ -120,6 +120,7 @@ setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 
 
 ############### Add location code to IL stations #############
+
 IL_stations$location <- "Del"
 IL_stations$location[IL_stations$Station == "Bondville"]  <- "Bon"
 IL_stations$location[IL_stations$Station == "Carbondale"] <- "Car"
@@ -134,6 +135,8 @@ Spo_station$location <- "Spo"
 
 ############# Merge date and time WI stations ##########
 
-Arl_station$DateTime <- mdy_hm(paste(Arl_station$date, Arl_station$time)) # create Datetime col.
-Han_station$DateTime <- mdy_hm(paste(Han_station$date, Han_station$time)) # create Datetime col.
-Spo_station$DateTime <- mdy_hm(paste(Spo_station$date, Spo_station$time)) # create Datetime col.
+# function (edit.date) corrects format @ 24hrs and adds DateTime element
+
+Arl_station <- edit.date(Arl_station)
+Han_station <- edit.date(Han_station)
+Spo_station <- edit.date(Spo_station)
