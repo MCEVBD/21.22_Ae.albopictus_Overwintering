@@ -140,3 +140,12 @@ Spo_station$location <- "Spo"
 Arl_station <- edit.date(Arl_station)
 Han_station <- edit.date(Han_station)
 Spo_station <- edit.date(Spo_station)
+
+############## R bind all Station dataframes ############
+
+# plyr::rbind.fill() is used b/c there are unique varaibles in some dfs that need to be carried through
+Temp_stations <- rbind.fill(IL_stations,
+                   Arl_station,
+                   Han_station,
+                   Spo_station)
+                   
