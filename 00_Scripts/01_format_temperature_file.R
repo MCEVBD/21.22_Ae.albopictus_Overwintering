@@ -26,7 +26,8 @@
 
 
 #lilbraries
-library("plyr")
+library(plyr)
+library(lubridate)
 
 ######### Import raw site files ##############
 ## RAW files are not included in the git files and version controling 
@@ -131,8 +132,8 @@ Han_station$location <- "Han"
 Spo_station$location <- "Spo"
 
 
+############# Merge date and time WI stations ##########
 
-
-  
-  
-  
+Arl_station$DateTime <- mdy_hm(paste(Arl_station$date, Arl_station$time)) # create Datetime col.
+Han_station$DateTime <- mdy_hm(paste(Han_station$date, Han_station$time)) # create Datetime col.
+Spo_station$DateTime <- mdy_hm(paste(Spo_station$date, Spo_station$time)) # create Datetime col.
