@@ -165,20 +165,11 @@ Temp_stations <- rbind.fill(IL_stations,
 #' 
 #' I was wrong. I think I need to merge the two dataframe first and 
 #' them move it from wide to long to wide to replicate the station 
-#' data across both tires (E and W)
+#' data across both tires (E and W) (7am 04-May-22)
 #' 
+#' Method two did not do what I wanted it to so I will try using a 
+#' merge function (7am 04-May-22) NOTE TO SELF: think simple first!
 
-# add station data
-Temp.ALL <- rbind.fill(Temp, Temp_stations)
-
-# correct format of temperature varaiable to numeric
-Temp.ALL$Tire <- as.numeric(Temp.ALL$Tire)
-Temp.ALL$Tire_b <- as.numeric(Temp.ALL$Tire_b)
-Temp.ALL$Soil <- as.numeric(Temp.ALL$Soil)
-Temp.ALL$Air_Temp <- as.numeric(Temp.ALL$Air_Temp)
-
-# shift Temp (tire data) to narrower format 
-Temp.N <- pivot_longer(Temp.ALL,col = c(Tire,Tire_b,Soil, Air_Temp))
-
+Temp.ALL <- merge(Temp, Temp_stations, by = c("location", "DateTime"))
 
 
