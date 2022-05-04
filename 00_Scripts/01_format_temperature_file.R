@@ -26,9 +26,11 @@
 
 
 #lilbraries
+library(tidyr)
 library(plyr)
-library(lubridate)
 library(dplyr)
+library(lubridate)
+
 
 ######### Import raw site files ##############
 ## RAW files are not included in the git files and version controling 
@@ -97,7 +99,7 @@ Temp <- rbind.fill(CTR,
                    Han_T1, Han_T2,
                    Spo_T1, Spo_T2)
 
-
+#########################################################
 ######### Import raw weather station files ##############
 ## RAW files are not included in the git files and version controling 
 ## IL and WI weather stations have differnt file formates so they will handle seperatly 
@@ -148,4 +150,24 @@ Temp_stations <- rbind.fill(IL_stations,
                    Arl_station,
                    Han_station,
                    Spo_station)
-                   
+
+#########################################################
+############### Merge tire and station data #############
+#' To merge the tire data and station I will shift the tire 
+#' data to a tidy format and add a the station data. (6am 04-May-22)
+#' 
+#' I was wrong. I think I need to merge the two dataframe first and 
+#' them move it from wide to long to wide to replicate the station 
+#' data across both tires (E and W)
+#' 
+
+# correct format of temperature varaiable to numeric
+Temp$Tire <- as.numeric(Temp$Tire)
+Temp$Tire_b <- as.numeric(Temp$Tire_b)
+Temp$Soil <- as.numeric(Temp$Soil)
+# shift Temp (tire data) to narrower format 
+Temp.N <- pivot_longer(Temp,col = c(Tire,Tire_b,Soil))
+
+# add station data
+Loc.Temp <- rbind.fill(Temp.N, Temp_stations)
+
