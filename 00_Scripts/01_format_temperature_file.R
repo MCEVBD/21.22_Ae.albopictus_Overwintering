@@ -53,6 +53,26 @@ setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 # merge dataframes will be stored as (location)_T2, as this is the correct location 
 ## again Arl_T2 will not be included as that HOBO monitor falled
 
+#Both T1 and T2 are using the same Soil temperature. T1 does not have a tire_b ( bottom ) temperature 
+
+#T1 merge, remove Tire_b
+
+Spo_T1 <- merge(Spo_T1,Spo_extSoil,by="DateTime", all = T)   # merge T1 and extSoil
+Spo_T1 <- subset(Spo_T1, select = -c(Tire_b))                # remove Tire_b from T1 file
+
+Han_T1 <- merge(Han_T1,Han_extSoil,by="DateTime", all = T)
+Han_T1 <- subset(Han_T1, select = -c(Tire_b))
+
+Del_T1 <- merge(Del_T1,Del_extSoil,by="DateTime", all = T)
+Del_T1 <- subset(Del_T1, select = -c(Tire_b))
+
+Bon_T1 <- merge(Bon_T1,Bon_extSoil,by="DateTime", all = T)
+Bon_T1 <- subset(Bon_T1, select = -c(Tire_b))
+
+Car_T1 <- merge(Car_T1,Bon_extSoil,by="DateTime", all = T)
+Car_T1 <- subset(Car_T1, select = -c(Tire_b))
+
+# T2 merge, maintain Tire_b
 Spo_T2 <- merge(Spo_T2,Spo_extSoil,by="DateTime", all = T)
 Han_T2 <- merge(Han_T2,Han_extSoil,by="DateTime", all = T)
 Del_T2 <- merge(Del_T2,Del_extSoil,by="DateTime", all = T)
@@ -174,4 +194,15 @@ Temp_stations <- rbind.fill(IL_stations,
 Temp.ALL <- merge(Temp, Temp_stations, by = c("location", "DateTime"))
 
 
+############ Clean up unneeded variables ###############
+# left over date, time, station varaibles removed
 
+Temp.ALL.b <- subset(Temp.ALL, select = -c(date, time, Station))
+
+# clean up col variable
+colnames(Temp.ALL.b)
+ColName <- c("location", "number", "ABC", "DateTime", 
+             "Air_Temp", "Tire", "Tire_b", "Soil",
+             "RH", "Tire_RH",
+             "Solar", "lwsZ_pwet", "pcpn", "soil_Z", "dwpt", "stmp_05cm")
+Temp.ALL.b <-Temp.ALL.b[,ColName] 
