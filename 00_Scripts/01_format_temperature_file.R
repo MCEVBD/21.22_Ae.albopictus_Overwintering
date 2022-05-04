@@ -226,3 +226,7 @@ Temp.ALL.b$Diff.RH <- Temp.ALL.b$Tire_RH - Temp.ALL.b$RH
 Temp.ALL.b$Diff.b    <- Temp.ALL.b$Tire_b - Temp.ALL.b$Air_Temp 
 
 
+######### Write temperature file#############
+
+write.csv(Temp.ALL.b, "00_Data/21.22_temperature.csv")
+
