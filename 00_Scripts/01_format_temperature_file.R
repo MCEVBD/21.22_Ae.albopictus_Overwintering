@@ -7,19 +7,19 @@
 #'      - 06 HOBO monitors with external probe located in the west tires at each site
 #'            - original varaibles: DateTime, Tire_b, Soil
 #'      - 06 hourly weather data files for the weather monitoring stations located at each site
-#'             - original varaibles: 
+#'             - original varaibles: Air_Temp, RH, Solar radiation, precip, (Date, time or DateTime)
 #'      
 #' The resulting dataframe is in a "wide" format and contains the following variables:
 #'      - location:    the 6 study sites
 #'      - number:      1-13, tire number N. to S., E. to W.
-#'      - DateTime:    ymd_hhmmss
+#'      - DateTime:    ymd_hhmm
 #'      - ABC:         E, W or S (only at Arl) tire location within location
-#'      - Ambient:     weather station 2m temperature 
+#'      - Air_Temp:    weather station 2m temperature 
 #'      - Tire:        HOBO recorded temperature recorded within the tire
 #'      - Tire_b:      HOBO recorded by probe+ monitor, in base of tire 
 #'      - Soil:        HOBO recorded temperature in soil 1m from the W tire
-#'      - Diff:        difference in temp between Ambient and Tire
-#'      - DiffS:       difference between Ambient and Soil
+#'      - Diff:        difference in temp between Air_Temp and Tire
+#'      - DiffS:       difference between Air_Temp and Soil
 #'      - DiffST:      difference between Tire and Soil 
 #'      
 #' Arl_T2 will be exculded from this data tabulation due to a monitor fail    
@@ -170,6 +170,8 @@ Temp_stations <- rbind.fill(IL_stations,
 #' Method two did not do what I wanted it to so I will try using a 
 #' merge function (7am 04-May-22) NOTE TO SELF: think simple first!
 
+# merge matching DateTime and location, this will result in the station data being repeated for each tire at that station.
 Temp.ALL <- merge(Temp, Temp_stations, by = c("location", "DateTime"))
+
 
 
