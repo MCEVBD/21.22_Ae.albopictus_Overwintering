@@ -99,6 +99,10 @@ Temp <- rbind.fill(CTR,
                    Han_T1, Han_T2,
                    Spo_T1, Spo_T2)
 
+############ Correct DataTime format in Temp ############
+
+Temp$DateTime <- mdy_hm(Temp$DateTime)
+
 #########################################################
 ######### Import raw weather station files ##############
 ## RAW files are not included in the git files and version controling 
@@ -127,6 +131,9 @@ IL_stations$location <- "Del"
 IL_stations$location[IL_stations$Station == "Bondville"]  <- "Bon"
 IL_stations$location[IL_stations$Station == "Carbondale"] <- "Car"
 
+########### Correct DateTime format in IL stations #############
+
+IL_stations$DateTime <- mdy_hm(IL_stations$DateTime)
 
 ############ Add location code to WI stations ##########
 
@@ -161,13 +168,17 @@ Temp_stations <- rbind.fill(IL_stations,
 #' data across both tires (E and W)
 #' 
 
-# correct format of temperature varaiable to numeric
-Temp$Tire <- as.numeric(Temp$Tire)
-Temp$Tire_b <- as.numeric(Temp$Tire_b)
-Temp$Soil <- as.numeric(Temp$Soil)
-# shift Temp (tire data) to narrower format 
-Temp.N <- pivot_longer(Temp,col = c(Tire,Tire_b,Soil))
-
 # add station data
-Loc.Temp <- rbind.fill(Temp.N, Temp_stations)
+Temp.ALL <- rbind.fill(Temp, Temp_stations)
+
+# correct format of temperature varaiable to numeric
+Temp.ALL$Tire <- as.numeric(Temp.ALL$Tire)
+Temp.ALL$Tire_b <- as.numeric(Temp.ALL$Tire_b)
+Temp.ALL$Soil <- as.numeric(Temp.ALL$Soil)
+Temp.ALL$Air_Temp <- as.numeric(Temp.ALL$Air_Temp)
+
+# shift Temp (tire data) to narrower format 
+Temp.N <- pivot_longer(Temp.ALL,col = c(Tire,Tire_b,Soil, Air_Temp))
+
+
 
