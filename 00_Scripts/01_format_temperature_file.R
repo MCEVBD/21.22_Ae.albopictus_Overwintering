@@ -199,10 +199,30 @@ Temp.ALL <- merge(Temp, Temp_stations, by = c("location", "DateTime"))
 
 Temp.ALL.b <- subset(Temp.ALL, select = -c(date, time, Station))
 
-# clean up col variable
+# clean up col variable order
 colnames(Temp.ALL.b)
-ColName <- c("location", "number", "ABC", "DateTime", 
+ColName <- c("location", "number", "ABC", "DateTime",   
              "Air_Temp", "Tire", "Tire_b", "Soil",
              "RH", "Tire_RH",
-             "Solar", "lwsZ_pwet", "pcpn", "soil_Z", "dwpt", "stmp_05cm")
-Temp.ALL.b <-Temp.ALL.b[,ColName] 
+             "Solar", "lwsZ_pwet", "pcpn", "soil_Z", "dwpt", "stmp_05cm")  # create reordered col list
+Temp.ALL.b <-Temp.ALL.b[,ColName]  #reorder using list
+
+
+############## Add new calculated variables to df ###############
+
+# Diff = Tire_temp - Air_temp ( + = warmer tire)
+Temp.ALL.b$Diff    <- Temp.ALL.b$Tire - Temp.ALL.b$Air_Temp 
+
+# Diff.S = soil_temp - Air_temp (+ = warmer soil)
+Temp.ALL.b$Diff.S  <- Temp.ALL.b$Soil - Temp.ALL.b$Air_Temp
+
+#Diff.ST = tire_temp - soil_temp (+ = warmer tire)
+Temp.ALL.b$Diff.ST <- Temp.ALL.b$Tire - Temp.ALL.b$Soil
+
+#Diff.RH = tireRH - AirRH (+ = wetter tire)
+Temp.ALL.b$Diff.RH <- Temp.ALL.b$Tire_RH - Temp.ALL.b$RH
+
+# Diff.b = Tire_bottom_temp - Air_temp ( + = warmer tire)
+Temp.ALL.b$Diff.b    <- Temp.ALL.b$Tire_b - Temp.ALL.b$Air_Temp 
+
+
