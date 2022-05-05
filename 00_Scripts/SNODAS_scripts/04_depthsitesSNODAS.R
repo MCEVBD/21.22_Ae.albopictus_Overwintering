@@ -35,5 +35,10 @@ for (i in 1:length(file.list)){
   data <- rbind(data,temp)                                       # bind rows togauther 
 }
 
+<<<<<<< HEAD
 # write file 
 # write_csv(data,'~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering/00_Data/21.22_SNODAS.csv')
+=======
+#write file 
+write_csv(data,'~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering/00_Data/21.22_SNODAS.csv')
+>>>>>>> 12df4e8b2e1e538bccf6f27bad6956d3f7c840cc
