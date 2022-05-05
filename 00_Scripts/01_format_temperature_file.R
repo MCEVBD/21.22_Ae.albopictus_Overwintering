@@ -215,6 +215,10 @@ ColName <- c("location", "number", "ABC", "DateTime",
 Temp.ALL.b <-Temp.ALL.b[,ColName]  #reorder using list
 
 
+# correct Del to Dek 
+Temp.ALL.b$location <- as.factor(Temp.ALL.b$location)                  # assin location as factor
+Temp.ALL.b$location <- recode_factor(Temp.ALL.b$location, Del = "Dek") # change factor name
+
 ############## Add new calculated variables to df ###############
 
 # Diff = Tire_temp - Air_temp ( + = warmer tire)
