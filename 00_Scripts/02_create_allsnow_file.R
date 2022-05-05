@@ -1,7 +1,7 @@
 #' ---
-#' title: 02_format_snowdata
-#' author: Katie M Susong
-#' date: 05-May-2022
+#' title: "02_format_snowdata"
+#' author: "Katie M Susong"
+#' date: "05-May-2022"
 #' ---
 #' 
 
