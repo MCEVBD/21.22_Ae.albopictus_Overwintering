@@ -1,9 +1,8 @@
 #' ---
-#' title: "07 OW albopictus- SNODAS snowdepth sites"
+#' title: "04 SNODAS depth at site extraction"
 #' author: "Katie Susong"
-#' date: "12th October 2020"
+#' date: "4 May 2022"
 #' ---
-
 
 
 #libraries
