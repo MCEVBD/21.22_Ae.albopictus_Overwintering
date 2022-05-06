@@ -10,7 +10,6 @@
 #'  New varaibles generated:
 #'     - Tire_num
 #'     - ABC (orintations)
-#'     - number
 #'     - per.sur
 #'     - rel.per.sur
 #'     - per.red
@@ -33,5 +32,17 @@ data <- read_csv("00_Data/21.22_section_survival_data.csv",
                                   sheet = col_factor(levels = c("A", "B", "C")), 
                                   site = col_factor(levels = c("Spo","Han", "Arl", "Dek", "Bon", "Car")), 
                                   x = col_number(), y = col_number()))
+
+########### Extract new variables ###########
+
+# 1) Tire_number
+# extract characters 
+data$tire_num <- substr(data$loc.id,8,9) # numbers refer to start and stop character number
+
+
+# 2) ABC (east, west or south tire)
+data$ABC <- "E"
+data$ABC[data$tire_num == "T2"] <- "W"
+data$ABC[data$tire_num == "T3"] <- "S"
 
 
