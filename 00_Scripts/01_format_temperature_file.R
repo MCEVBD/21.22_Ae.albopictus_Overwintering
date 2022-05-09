@@ -103,7 +103,7 @@ Bon_T2      <- temp.variable.add(Bon_T2, "Bon", '11', 'W', '4736')
 Car_T1      <- temp.variable.add(Car_T1, 'Car', '12', 'E', '4736')
 Car_T2      <- temp.variable.add(Car_T2, 'Car', '13', 'W', '4736')
 
-CTR         <- temp.variable.add(CTR, "CTR", 'NA', 'NA', '4760')
+CTR         <- temp.variable.add(CTR, "CTR", '0', 'NA', '4760')
 
 Del_T1      <- temp.variable.add(Del_T1, 'Del', '8', 'E', '4736')
 Del_T2      <- temp.variable.add(Del_T2, 'Del', '9', 'W', '4736')
