@@ -25,3 +25,10 @@ edit.date <- function(df){
   return(df)
 }
   
+
+
+# FUCNTION: F to C 
+
+FtoC <- function(Far){
+  (Far - 32) * 5/9 
+}
