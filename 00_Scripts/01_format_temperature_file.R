@@ -177,6 +177,11 @@ Arl_station <- edit.date(Arl_station)
 Han_station <- edit.date(Han_station)
 Spo_station <- edit.date(Spo_station)
 
+############# Correct Spon temp. units ################
+# Spo is currently listed in F not C  and must be corrected
+Spo_station$Air_Temp <- FtoC(Spo_station$Air_Temp)
+Spo_station$dwpt     <- FtoC(Spo_station$dwpt)
+
 ############## R bind all Station dataframes ############
 
 # plyr::rbind.fill() is used b/c there are unique varaibles in some dfs that need to be carried through
@@ -198,7 +203,7 @@ Temp_stations <- rbind.fill(IL_stations,
 #' merge function (7am 04-May-22) NOTE TO SELF: think simple first!
 
 # merge matching DateTime and location, this will result in the station data being repeated for each tire at that station.
-Temp.ALL <- merge(Temp, Temp_stations, by = c("location", "DateTime"))
+Temp.ALL <- merge(Temp, Temp_stations, by = c("location", "DateTime"), all.x = TRUE)
 
 
 ############ Clean up unneeded variables ###############
