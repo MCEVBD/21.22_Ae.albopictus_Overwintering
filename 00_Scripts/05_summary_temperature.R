@@ -227,17 +227,44 @@ hatch <- merge(hatch, FreezeThaw,"number", all.x = T)
 
 ######### Growing Degrees Days ########
 
-## winter GDD days 
+## winter GDDs ###
 DJF <- filter(data, Date > "2021-11-30", Date < "2022-03-01")  # filter data set to DJF
 numbers <- levels(DJF$number) # store numbers for list 
-
-
 ## For loop to caluate each tires cummulative GDD (Tbase == 10)
 for (i in numbers) {
-  DJF$GDD_10[DJF$number == i] <- GDD(DJF$Tire[DJF$number == i], summ = T, Tbase = 10)
+  DJF$GDD_10_DJF[DJF$number == i] <- GDD(DJF$Tire[DJF$number == i], summ = T, Tbase = 10)
+  hatch$GDD_10_DJF[hatch$number == i] <-  max(DJF$GDD_10_DJF[DJF$number == i])
 }
-
 ## For loop to caluate each tires cummulative GDD (Tbase == -12)
 for (i in numbers) {
-  DJF$GDD_n12[DJF$number == i] <- GDD(DJF$Tire[DJF$number == i], summ = T, Tbase = -12)
+  DJF$GDD_n12_DJF[DJF$number == i] <- GDD(DJF$Tire[DJF$number == i], summ = T, Tbase = -12)
+  hatch$GDD_n12_DJF[hatch$number == i] <-  max(DJF$GDD_n12_DJF[DJF$number == i])
 }
+
+# Merge DJF into large hourly data df
+
+# make smaller data frame to merge to data
+DJF.s <- data.frame("DateTime"    = DJF$DateTime,
+                    "number"      = DJF$number,
+                    "GDD_10_DJF"  = DJF$GDD_10_DJF, 
+                    "GDD_n12_DJF" = DJF$GDD_n12_DJF)
+data <- merge(data, DJF.s, by = c("DateTime", "number"), all.x = T)
+
+
+### Full GDDs ###
+## For loop to caluate each tires cummulative GDD (Tbase == -12)
+for (i in numbers) {
+  data$GDD_10_FULL[data$number == i] <- GDD(data$Tire[data$number == i], summ = T, Tbase = 10)
+  hatch$GDD_10_FULL[hatch$number == i] <-  max(data$GDD_10_FULL[data$number == i])
+}
+## For loop to caluate each tires cummulative GDD (Tbase == -12)
+for (i in numbers) {
+  data$GDD_n12_FULL[data$number == i] <- GDD(data$Tire[data$number == i], summ = T, Tbase = -12)
+  hatch$GDD_n12_FULL[hatch$number == i] <-  max(data$GDD_n12_FULL[data$number == i])
+}
+
+
+################# Saving files ###############
+
+#write.csv(data, "00_Data/21.22_temperature.csv")
+#write.csv(hatch, "00_Data/21.22_hatch_temperature_summary.csv")
