@@ -17,8 +17,15 @@
 #'      - Min tmeperature 
 #'      - Diff in min tmeperature *
 #'      - Consecutive hours below -12C
-#'      - Number of Days with temperatures below -12C
+#'      - Number of Days  with temperatures below -12C
 #'      - Date of First Frost 
+#'      - GDD 
+#'          - GDD_10: measure  of  the  magnitude  by  which  daily  average 
+#'          temperatures exceed a baseline temperature of 10°C.
+#'          (per Johnson 2017 Jour.Med.Ent.)
+#'          - GDD_n12:  exceeded baseline temperature of 10°C. ( considered non-leathel days)
+#'  
+#'      
 #'  * for diff. calculations positive number indicates warmer temperatures in the tire. 
 
 
@@ -26,6 +33,7 @@
 library(dplyr)
 library(tidyr)
 library(lubridate)
+library(chillR)
 
 ### import data ###
 
@@ -217,3 +225,19 @@ for (x in 1:13) {
 hatch <- merge(hatch, FreezeThaw,"number", all.x = T)
 
 
+######### Growing Degrees Days ########
+
+## winter GDD days 
+DJF <- filter(data, Date > "2021-11-30", Date < "2022-03-01")  # filter data set to DJF
+numbers <- levels(DJF$number) # store numbers for list 
+
+
+## For loop to caluate each tires cummulative GDD (Tbase == 10)
+for (i in numbers) {
+  DJF$GDD_10[DJF$number == i] <- GDD(DJF$Tire[DJF$number == i], summ = T, Tbase = 10)
+}
+
+## For loop to caluate each tires cummulative GDD (Tbase == -12)
+for (i in numbers) {
+  DJF$GDD_n12[DJF$number == i] <- GDD(DJF$Tire[DJF$number == i], summ = T, Tbase = -12)
+}
