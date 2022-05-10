@@ -134,7 +134,7 @@ Tt <- data %>%
   dplyr::summarise( DaysB12T = n_distinct(Date))
 
 #merge with summary DF
-hatch <- merge(hatch, Tt,"number")
+hatch <- merge(hatch, Tt,"number", all.x =T)
 
 ### AIR ###
 
@@ -144,7 +144,7 @@ Tt <- data %>%
   dplyr::summarise(DaysB12A = n_distinct(Date))
 
 #merge with summary DF
-hatch <- merge(hatch, Tt,"number")
+hatch <- merge(hatch, Tt,"number", all.x = T)
 
 # correct format
 hatch$DaysB12T <- as.numeric(hatch$DaysB12T)
@@ -267,4 +267,4 @@ for (i in numbers) {
 ################# Saving files ###############
 
 #write.csv(data, "00_Data/21.22_temperature.csv")
-#write.csv(hatch, "00_Data/21.22_hatch_temperature_summary.csv")
+write.csv(hatch, "00_Data/21.22_hatch_temperature_summary.csv")
