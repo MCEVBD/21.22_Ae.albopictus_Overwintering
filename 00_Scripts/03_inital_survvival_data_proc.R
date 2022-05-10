@@ -88,6 +88,9 @@ data$per.red.live <- NA
 for (i in sheet) {
   data$per.red.live[data$sheet == i] 
 }
+########### write csv #########
+
+#write.csv(data, "00_Data/21.22_section_survival_data.csv")
 
 ########### Plots ############
 # for all plots tire 7 (Atil_WI_T3) will be excluded as those egg sheets where part of a staggerd collection
@@ -101,26 +104,18 @@ data %>%
 ## percent survial by site
 data %>%
   filter(number != 7) %>%
-  ggplot(aes(site, per.sur)) +
+  ggplot(aes(site, per.sur.live)) +
   geom_boxplot()
 
 ## relative percent survial by site
 data %>%
   filter(number != 7) %>%
-  ggplot(aes(site, rel.per.sur)) +
+  ggplot(aes(site, rel.per.sur.live)) +
   geom_boxplot()
 
 ## relative percent survial by lat
 data %>%
   filter(number != 7) %>%
-  ggplot(aes( x, rel.per.sur)) +
-  geom_point()
-
-## avg. ( by site) percent survial by lat
-data %>%
-  filter(number != 7) %>%
-  group_by(x) %>%
-  summarise(mean.per.sur = mean (per.sur)) %>%
-  ggplot(aes(x, mean.per.sur)) +
+  ggplot(aes( x, rel.per.sur.live)) +
   geom_point()
 
