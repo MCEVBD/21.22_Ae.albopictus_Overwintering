@@ -27,7 +27,7 @@ data$DateTime  <- mdy_hm(data$DateTime)
 
 
 #### create Arl_3 and CTR small dataframes
-Arl3 <- filter(data, number == "6")
+Arl3 <- filter(data, number == "7")
 CTR  <- filter(data, number == "0")
 
 
