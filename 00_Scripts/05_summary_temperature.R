@@ -39,12 +39,17 @@ library(chillR)
 
 #temperature data
 data  <- read.csv("00_Data/21.22_temperature.csv")
-# formart correction
-data$DateTime <- ymd_hms(data$DateTime)
+# format correction
+data$DateTime <- mdy_hm(data$DateTime)
 data$number   <- as.factor(data$number)
 
 # hatch data
 hatch <- read.csv("00_Data/21.22_section_survival_data.csv")
+# format correction
+hatch$number <- as.factor(hatch$number)
+# filter dataframe to exclude Arl_T3 (the summary values for it will need to created seperatly)
+data <- filter(data, number != "7")
+hatch <- filter(hatch, number != "7")
 
 ############ Mean Jan. Temperature #############
 ### TIRE and AIR ###
@@ -59,11 +64,11 @@ hatch <- merge(hatch, Tt,"number")
 hatch$JANmeanT <- round( as.numeric(hatch$JANmeanT), 1)
 hatch$JANmeanA <- round( as.numeric(hatch$JANmeanA), 1)
 
-############## Diff. in mean Jan. temperature ############
+############ Diff. in mean Jan. temperature ############
 
 hatch$JANmeanD <- -(abs(hatch$JANmeanT) - abs(hatch$JANmeanA))
 
-########### Winter Mean Temperature ############
+############ Winter Mean Temperature ############
 ### TIRE and AIR ###
 
 Tt<-data %>% 
@@ -76,12 +81,12 @@ hatch <- merge(hatch, Tt,"number")
 hatch$DJFmeanT <- round (as.numeric(hatch$DJFmeanT), 2)
 hatch$DJFmeanA <- round( as.numeric(hatch$DJFmeanA), 2)
 
-############## Diff. in mean DJF temperature ############
+############ Diff. in mean DJF temperature ############
 
 hatch$DJFmeanD <- -(abs(hatch$DJFmeanT) - abs(hatch$DJFmeanA))
 
 
-############# Min. Temp in Tires #################
+############ Min. Temp in Tires #################
 
 Tt <- data %>%
   group_by(number) %>%                               # group by location
@@ -98,7 +103,7 @@ hatch$MinA <- round (as.numeric(hatch$MinA), 2)
 
 hatch$MinD <- hatch$MinT - hatch$MinA 
 
-########### Date of First Frost #############
+############ Date of First Frost #############
 ### Tire ###
 
 Tt <- data %>%
@@ -120,7 +125,7 @@ Tt <- data %>%
 hatch <- merge(hatch, Tt,"number", all.x =  TRUE)
 
 
-########### Number of Days below -12 ############
+############ Number of Days below -12 ############
 ### TIRE ###
 #'
 #' Given that lab experiments have found that there is a critical 
@@ -152,7 +157,7 @@ hatch$DaysB12A <- as.numeric(hatch$DaysB12A)
 
 
 
-####### Max Consecutive hours below -12 #######
+############ Max Consecutive hours below -12 #######
 ### Tire ###
 
 
@@ -225,7 +230,7 @@ for (x in 1:13) {
 hatch <- merge(hatch, FreezeThaw,"number", all.x = T)
 
 
-######### Growing Degrees Days ########
+############ Growing Degrees Days ########
 
 ## winter GDDs ###
 DJF <- filter(data, Date > "2021-11-30", Date < "2022-03-01")  # filter data set to DJF
@@ -264,7 +269,9 @@ for (i in numbers) {
 }
 
 
-################# Saving files ###############
+############ Saving files ###############
 
-#write.csv(data, "00_Data/21.22_temperature.csv")
-# write.csv(hatch, "00_Data/21.22_hatch_temperature_summary.csv")
+#  write.csv(data, "00_Data/21.22_temperature_NO.Arl3.csv")
+#  write.csv(hatch, "00_Data/21.22_hatch_temperature_summary_N).Arl3.csv")
+
+
