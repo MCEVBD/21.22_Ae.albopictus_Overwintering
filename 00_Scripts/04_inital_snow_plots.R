@@ -22,18 +22,15 @@ snow <- read.csv("00_Data/21.22_all_snow.csv")
 # correct str 
 snow$date <- ymd(snow$date)
 
+
 #on site measurements are in cm and need to be changed to mm
-snow$depth_Etire <- snow$depth_Etire * 10
-snow$depth_G     <- snow$depth_G * 10
-snow$depth_Wtire <- snow$depth_Wtire  * 10
-snow$depth_Stire <- snow$depth_Stire  * 10
+#snow$depth_Etire <- snow$depth_Etire * 10
+#snow$depth_G     <- snow$depth_G * 10
+#snow$depth_Wtire <- snow$depth_Wtire  * 10
+#snow$depth_Stire <- snow$depth_Stire  * 10
 
 # write .csv with corrected units
-#write.csv(snow, "00_Data/21.22_all_snow.csv")
-
-
-# inital pairs plot
-pairs(snow)
+# write.csv(snow, "00_Data/21.22_all_snow.csv")
 
 # inital investigation plots
 
@@ -41,7 +38,7 @@ pairs(snow)
 ggplot(snow, aes(depth_G, snow_depth))+
   geom_point() + 
   geom_abline(slope = 1, intercept = 0) + 
-  xlim(0,400)
+  ylim(0,400)
 # HISTOGRAM: GOUND DEPTH
 hist(snow$depth_G)
 hist(snow$snow_depth)
@@ -63,10 +60,11 @@ ggplot(snow, aes(depth_Etire, depth_Wtire))+
   geom_point() +
   geom_abline(slope = 1, intercept = 0) + 
   xlim(0,125)
-
 #' E an W tire visually appear to trend the same 
 #' 
 #' There may be trend for ground v. tire cover but it is slopy and may only apply at higher snow depths. 
+
+
 
 ################################################################################
 
