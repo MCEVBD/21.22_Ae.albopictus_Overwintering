@@ -15,7 +15,6 @@
 #'         2. percent survivial, ordered lowest JanmeanT -> highest JanmeanT 
 #'     - Plots of Temperature by site
 #'         1. JANMeanT byt site (ordered N -> S)
-#'         2.
 #'     - Plots of Survival and Temperature
 #'         1. JANmeanT and per.sur.live, col by site
 #'         2. Survivial and GDD (10??C) during DJF
@@ -24,7 +23,7 @@
 #'         5. Survivial and date of first Frost (Tire)
 #'         6. Survivial and DaysB12T
 #'         7. Survivial and MAX hrs below -12
-#'         
+#'         8. Survival and JANTempD
 #'       
 
 
@@ -105,5 +104,9 @@ ggplot(hts, aes( DaysB12T,per.sur.live, col = site)) +
 ggplot(hts, aes( MAXHrsB12conT,per.sur.live, col = site)) +
   geom_point()
 
+#' **Plot 8:** Differance in mean JAN temp and survival 
+#' 
+ggplot(hts, aes( JANmeanD,per.sur.live, col = site)) +
+  geom_point()
 
 
