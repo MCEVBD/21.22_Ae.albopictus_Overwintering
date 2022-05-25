@@ -40,6 +40,7 @@ snow$Date <- mdy(snow$Date)
 
 #### Daily temperature values ####
 
+# create new dataframe to save new daily values
 temp <- dia %>%
   group_by(number,Date) %>%
   dplyr::summarise(MeanT_Air = mean(Air_Temp), 
@@ -49,8 +50,10 @@ temp <- dia %>%
                    MaxT_Air = max(Air_Temp),
                    MaxT_Tire = max(Tire))
   
-  
-  
-  
+# calculate difference values 
+temp$MeanT_Diff <- temp$MeanT_Tire - temp$MeanT_Air
+temp$MinT_Diff  <- temp$MinT_Tire - temp$MinT_Air 
+temp$MaxT_Diff  <- temp$MaxT_Tire - temp$MaxT_Air 
+
   
   
