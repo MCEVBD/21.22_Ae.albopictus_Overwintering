@@ -17,10 +17,18 @@
 #'  CONCLUSIONS: The difference in air and tire temperature increases from as sites go north. 
 #'  the greatest difference is seen in JAN and FEB
 #'  
+#'  Temperature Plots
+#'    1. Tire v Air temperature  
+#'  
 #'  Difference Plots
 #'    1. Boxplot, Diff by location
 #'    2. Boxplot, Diff by location for JAN
-#'    3. Boxplot, Diff by location for DJF   
+#'    3. Boxplot, Diff by location for DJF  
+#'    4. Histogram of diff 
+#'  CONCLUSIONS: the differnece looks significant by location, partcularly in JAN or DJF. To test this 
+#'  a glm with a normal distribution was used to determine the significance of location to difference 
+#'  in tire and air temperature. This glm indicates that differnce is significantly differnce between 
+#'  locations. 
 #' 
 
 # Libraries
@@ -32,6 +40,7 @@ library(dplyr)
 dia  <- read.csv("00_Data/21.22_temperature_NO.Arl3.csv")
 # Format corrections
 dia$DateTime <- ymd_hms(dia$DateTime)
+dia$Date     <- ymd(dia$Date)
 dia$location <- factor(dia$location, levels = c("CTR", "Car", "Bon", "Dek", "Arl", "Han", "Spo"))
 
 
@@ -69,8 +78,20 @@ dia %>%
   geom_line(col = "red") + 
   facet_grid( rows = vars(location))
 
+#' Temperature Plots 
+#' ==================
+#' 
+#' **Plot 1:** Air v Tire temp 
+#' 
+dia %>%
+  filter(DateTime < "2022-05-10 24:00:00") %>%
+  ggplot(aes(Tire,Air_Temp, col = location))+
+  geom_point()
 
-#' Other Plots
+
+
+
+#' Difference Plots
 #' ============
 #' 
 #' **Plot 1:** Boxplot, Diff by location
@@ -80,7 +101,7 @@ dia %>%
 ggplot(dia, aes(location, Diff)) + 
   geom_boxplot()
 
-#' **Plot 2:** Boxxplot, Diff by location for JAN
+#' **Plot 2:** Boxplot, Diff by location for JAN
 #' 
 
 dia %>%
@@ -88,13 +109,22 @@ dia %>%
   ggplot(aes(location, Diff)) + 
   geom_boxplot()
 
-#' **Plot 3:** Boxxplot, Diff by location for DJF
+#' **Plot 3:** Boxplot, Diff by location for DJF
+#' 
 
 dia %>%
   filter(DateTime > "2021-11-31 24:00:00", DateTime < "2022-03-01 00:00:00") %>%
   ggplot(aes(location, Diff)) + 
   geom_boxplot()
 
+#' **Plot 4:** histogram of diff
+#' 
 
+hist(dia$Diff)
 
+model <- glm(Diff ~ location,  data = filter(dia, location != "CTR"))
+summary(model) 
+plot(model)
 
+model2 <- glm(Diff ~ location + Date, data = filter(dia, location != "CTR"))
+summary(model2)
