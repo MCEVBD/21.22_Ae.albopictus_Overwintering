@@ -136,7 +136,6 @@ snowF$cover[snowF$cover_S == 'y' & snowF$cover_T == 'y'] <- "both"
 
 #### Daily temperature values ####
 
-
 # create new dataframe to save new daily values
 temp <- dia %>%
   group_by(number,Date) %>%
@@ -155,5 +154,7 @@ temp$MaxT_Diff  <- temp$MaxT_Tire  - temp$MaxT_Air
 
 # Merge temp daily files with snow file 
 
-snow <- merge(temp, snow, by= c(number, Date))
-  
+snowF <- merge(temp, snowF, by= c( "number", "Date"))
+
+# save new snow file 
+# write.csv(snowF, "00_Data/21.22_snow_temperature.csv")
