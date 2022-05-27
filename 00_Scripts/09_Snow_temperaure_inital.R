@@ -28,7 +28,10 @@
 #' ================   
 #'    1. Air and tire temperature (color by cover)
 #'    2. Air and tire temperature (color scale by snow)
-#'    
+#'  CONCLUSIONS: strong trends Full cover of tires produces the greatest insulation
+#'  
+#'  NEXT STEP: use the 18/19 glm (susong, tucker et al 2022) to predict values for 21/22
+#'  and compare
 #'
 
 
