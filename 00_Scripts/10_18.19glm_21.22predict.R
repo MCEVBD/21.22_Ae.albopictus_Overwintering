@@ -21,6 +21,7 @@
 library(lubridate)
 library(dplyr)
 library(lme4)
+library(ggplot2)
 
 #### Import data ####
 #18/19 data
@@ -50,3 +51,31 @@ data <- rename(data, site = "location")
 
 ##### Run 18/19 model ####
 mixed.model2 <- lmer(MeanT_Tire ~ MeanT_Ambient + relevel(snow_FAC10, ref = 5)+ (1|site), data = DIA)
+
+
+#### Run Predict ###
+
+data$predict <- predict(mixed.model2, data, type = "response",allow.new.levels = T)
+
+#### Plot Predict ####
+
+hist(data$MeanT_Tire)
+hist(data$predict)
+
+ggplot(data, aes( MeanT_Tire, predict,col = MeanT_Ambient))+
+  geom_point()
+
+ggplot(data, aes(Date, predict)) +
+  geom_line(col = "red" ) + 
+  geom_line(aes(Date, MeanT_Tire)) +
+  facet_wrap(~site, nrow = 6)
+
+ggplot(data, aes(MeanT_Ambient, ((data$MeanT_Tire)-(data$predict))))+
+  geom_point()
+
+
+# need to quantify the fit/ prediction 
+### regression 
+
+
+
