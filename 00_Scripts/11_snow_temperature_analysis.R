@@ -36,6 +36,7 @@
 #'   5. add site as random effect (siteR) :MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site)
 #'     - AIC: 7020.697
 #'     - 'log Lik.' -3498.348 (df=12)
+#'     ** SELECTED MODEL **
 #'   6. siteR minus air:snow interaction (siteRmin): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (1|site)
 #'     - AIC: 8045.815
 #'     - 'log Lik.' -4014.908 (df=8)
@@ -96,25 +97,25 @@ plot_model(m18.19,
 
 #### Independed regression development ####
 
-#### Null model ####
+#### 1.Null model ####
 null <- glm(MeanT_Tire ~ 1, data = data)
 summary(null)
 plot(null)
 
-#### Air ####
+#### 2.Air ####
 air <- glm(MeanT_Tire ~ MeanT_Ambient, data = data)
 summary(air)
 logLik(air)
 plot(air)
 
-#### snow ####
+#### 3.snow ####
 snow <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10, data=data)
 summary(snow)
 logLik(snow)
 plot(air)
 plot_model(snow)
 
-#### snowplus ####
+#### 4.snowplus ####
 snowplus <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + MeanT_Ambient:snow_FAC10, data=data)
 summary(snowplus)
 logLik(snowplus)
@@ -123,18 +124,24 @@ tab_model(snowplus)
 plot_model(snowplus)
 anova(snow, snowplus)
 
-#### siteR ####
+#### 5.siteR ####
 siteR <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = data)
 summary(siteR)
 AIC(siteR)
 logLik(siteR)
 tab_model(siteR)
+plot_model(siteR)
+
+plot_models(siteR, siteRmin)
 
 #### siteRmin ####
 siteRmin <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 +  (1|site),data= data)
 summary(siteRmin)
 AIC(siteRmin)
 logLik(siteRmin)
+tab_model(siteRmin)
+plot_model(siteRmin)
+
 
 #### datemin ####
 datemin <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + Date + (1|site) , data = data)
