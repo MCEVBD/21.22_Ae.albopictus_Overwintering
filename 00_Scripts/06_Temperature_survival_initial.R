@@ -28,8 +28,11 @@
 
 
 # libraries
+library(dplyr)
 library(ggplot2)
 library(lubridate)
+library(viridis)
+
 # import data
 hts <- read.csv("00_Data/21.22_hatch_temperature_summary_NO.Arl3.csv")
 # format data
@@ -37,6 +40,26 @@ hts$number  <- as.factor(hts$number)
 hts$site    <- factor(hts$site, levels = c("CTR", "Car", "Bon", "Dek", "Arl", "Han", "Spo"))
 hts$FFrostT <- mdy_hm(hts$FFrostT) 
 
+
+######### Summary Values #####
+
+summary <- hts %>%
+    group_by(site) %>%
+    dplyr::summarise( per.sur.live = mean(per.sur.live),
+                      JANmeanT = mean(JANmeanT),
+                      JANmeanA = mean(JANmeanA),
+                      MinT = mean(MinT, na.rm = T),
+                      MinA = mean(MinA, na.rm = T),
+                      JANmeanD = mean(JANmeanD),
+                      DaysB12T = mean(DaysB12T),
+                      DaysB12A = mean(DaysB12A),
+                      hrB12Tcon = mean(MAXHrsB12conT),
+                      hrB12Acon = mean(MAXHrsB12conA),
+                      FreThaA = mean(FreThaA),
+                      FreThaT = mean(FreThaT))
+
+# write summary table:
+write.csv(summary, "00_Data/21.22_bysite.temperature.survival.csv")
 
 ############# PLOTS ###########
 
@@ -46,7 +69,7 @@ hts$FFrostT <- mdy_hm(hts$FFrostT)
 #' **Plot 1:** percent survival, ordered N -> S  
 #' 
 ggplot(hts, aes(site, per.sur.live))+
-  geom_boxplot()
+  geom_boxplot() 
 
 #' **Plot 2:** percent survivial, ordered lowest JanmeanT -> highest JanmeanT 
 #' 

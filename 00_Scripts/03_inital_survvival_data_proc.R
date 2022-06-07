@@ -25,13 +25,14 @@
 #'      -
 
 
+
 #libraries
 library(readr)
 library(ggplot2)
 library(dplyr)
 
 ######### Import data #######
-
+setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 data <- read_csv("00_Data/21.22_section_survival_data.csv",
                  col_types = cols(dead.hatch1 = col_integer(),dead.hatch2 = col_integer(), dead.hatch3 = col_integer(), dead.hatch4 = col_integer(),
                                   live.hatch1 = col_integer(), live.hatch2 = col_integer(), live.hatch3 = col_integer(), live.hatch4 = col_integer(),
