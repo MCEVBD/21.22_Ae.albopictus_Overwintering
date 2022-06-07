@@ -45,6 +45,14 @@ library(lme4)
 library(ggplot2)
 library(sjPlot) #for plotting lmer and glmer mods
 
+#### Overdispersal function ####
+overdisp_fun <- function(model) {
+  rdf <- df.residual(model)
+  rp <- residuals(model,type="pearson")
+  Pearson.chisq <- sum(rp^2)
+  prat <- Pearson.chisq/rdf
+  pval <- pchisq(Pearson.chisq, df=rdf, lower.tail=FALSE)
+  c(chisq=Pearson.chisq,ratio=prat,rdf=rdf,p=pval) }
 
 #### Import data ####
 #18/19 data
@@ -105,6 +113,13 @@ holdout =both[-picked,]
 m18.19 <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = DIA)
 m21.22 <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = data)
 m.all  <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = development)
+
+#### test overdispersal ####
+
+# all models are overdispersed 
+overdisp_fun(m18.19)
+overdisp_fun(m21.22)
+overdisp_fun(m.all)
 
 #### Generate predict on single df ####
 
