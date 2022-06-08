@@ -19,11 +19,11 @@ library(dplyr)
 library(lubridate)
 
 #### Import Data set ####
-
+rm (list  = ls())
 # hourly temperature data for all sites
 data           <- read.csv("00_Data/21.22_temperature.csv")
 data$number    <- as.factor(data$number)
-data$DateTime  <- mdy_hm(data$DateTime)
+data$DateTime  <- ymd_hms(data$DateTime)
 
 
 #### create Arl_3 and CTR small dataframes
@@ -121,3 +121,7 @@ Arl3_pull <- rbind(pull1, pull2, pull3, pull4, pull5, pull6)
 
 # save data
 # write.csv(Arl3_pull, "00_Data/21.22_temperature_arl3.csv")
+
+
+
+#
