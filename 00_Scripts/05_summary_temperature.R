@@ -36,11 +36,11 @@ library(lubridate)
 library(chillR)
 
 ### import data ###
-
+rm (list  = ls())
 #temperature data
 data  <- read.csv("00_Data/21.22_temperature.csv")
 # format correction
-data$DateTime <- mdy_hm(data$DateTime)
+data$DateTime <- ymd_hms(data$DateTime)
 data$number   <- as.factor(data$number)
 
 # hatch data
@@ -272,6 +272,6 @@ for (i in numbers) {
 ############ Saving files ###############
 
 #  write.csv(data, "00_Data/21.22_temperature_NO.Arl3.csv")
-#  write.csv(hatch, "00_Data/21.22_hatch_temperature_summary_N).Arl3.csv")
+#  write.csv(hatch, "00_Data/21.22_hatch_temperature_summary_NO.Arl3.csv")
 
 
