@@ -216,7 +216,8 @@ colnames(Temp.ALL.b)
 ColName <- c("location", "number", "ABC", "DateTime",   
              "Air_Temp", "Tire", "Tire_b", "Soil",
              "RH", "Tire_RH",
-             "Solar", "lwsZ_pwet", "pcpn", "soil_Z", "dwpt", "stmp_05cm")  # create reordered col list
+             "Solar", "pcpn", "dwpt",
+             "wdir", "wspd", "wspd_max","wstdv" )  # create reordered col list
 Temp.ALL.b <-Temp.ALL.b[,ColName]  #reorder using list
 
 
