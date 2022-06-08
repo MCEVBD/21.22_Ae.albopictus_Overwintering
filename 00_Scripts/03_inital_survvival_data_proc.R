@@ -4,7 +4,7 @@
 #' date: "05-May-2022"
 #' --- 
 
-#' Initial formating and visulization of surival data
+#' Initial formating  of surival data
 #' ==================================================
 #' 
 #'  New varaibles generated:
@@ -19,10 +19,7 @@
 #'     - rel.per.sur.live
 #'     - per.red.live
 #'     
-#' visulizations : 
-#'      -
-#'      -
-#'      -
+
 
 
 

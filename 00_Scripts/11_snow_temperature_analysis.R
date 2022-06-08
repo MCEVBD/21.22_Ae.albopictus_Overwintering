@@ -98,6 +98,7 @@ plot_model(m18.19,
 
 #### Independed regression development ####
 
+hist(data$MeanT_Tire)
 #### 1.Null model ####
 null <- glm(MeanT_Tire ~ 1, data = data)
 summary(null)

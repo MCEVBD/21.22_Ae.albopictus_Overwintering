@@ -48,6 +48,7 @@
 # libraries
 
 library(lubridate)
+library(sjPlot)
 
 #### IMPORT DATA ####
 
@@ -96,7 +97,6 @@ plot(longplus)
 longplus2 <- glm(depth_G ~ snow_depth + y + x + y:snow_depth + x:y + x:snow_depth, family = poisson, snow)
 summary(longplus2)
 plot(longplus2)
-
 #### Model 8 ####
 
 date <- glm(depth_G ~ snow_depth + y + x + date + y:snow_depth + x:y + x:snow_depth, family = poisson, snow)
