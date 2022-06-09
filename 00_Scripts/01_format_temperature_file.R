@@ -161,6 +161,7 @@ IL_stations$location[IL_stations$Station == "Carbondale"] <- "Car"
 ########### Correct DateTime format in IL stations #############
 
 IL_stations$DateTime <- mdy_hm(IL_stations$DateTime)
+IL_stations$wspd <- IL_stations$wspd_mph * 0.44704
 
 ############ Add location code to WI stations ##########
 
@@ -244,6 +245,7 @@ Temp.ALL.b$Diff.b    <- Temp.ALL.b$Tire_b - Temp.ALL.b$Air_Temp
 
 
 ######### Write temperature file#############
-
+# filter dates
+Temp.ALL.b <- filter(Temp.ALL.b, DateTime > "2021-10-06 06:00:00" & DateTime < "2022-04-15 24:00:00" )
 write.csv(Temp.ALL.b, "00_Data/21.22_temperature.csv")
 
