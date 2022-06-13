@@ -58,6 +58,9 @@ CTR  <- filter(data, number == "0")
 # generate temp. df
 temp.b <- filter (Arl3, DateTime < "2021-11-30 12:00:00" )  # days before the sheet was pulled
 temp.a <- filter (CTR, DateTime >  "2021-11-30 12:00:00" )  # days after the sheet was pulled
+# add condition variable to temp.a and temp.b
+temp.b$condition <- "pull1"
+temp.a$condition <- "ctr"
 # merge 2 temp.dfs 
 pull1  <- rbind(temp.b,temp.a)
 # add pull date and sheet number 
@@ -68,6 +71,9 @@ pull1$sheet     <- "B.12"
 # generate temp. df
 temp.b <- filter (Arl3, DateTime < "2021-12-21 12:00:00" )  # days before the sheet was pulled
 temp.a <- filter (CTR, DateTime >  "2021-12-21 12:00:00" )  # days after the sheet was pulled
+# add condition variable to temp.a and temp.b
+temp.b$condition <- "pull2"
+temp.a$condition <- "ctr"
 # merge 2 temp.dfs 
 pull2  <- rbind(temp.b,temp.a)
 # add pull date and sheet number 
@@ -78,7 +84,9 @@ pull2$sheet     <- "C.1"
 # generate temp. df
 temp.b <- filter (Arl3, DateTime < "2022-01-11 12:00:00" )  # days before the sheet was pulled
 temp.a <- filter (CTR, DateTime >  "2022-01-11 12:00:00" )  # days after the sheet was pulled
-# merge 2 temp.dfs 
+# add condition variable to temp.a and temp.b
+temp.b$condition <- "pull3"
+temp.a$condition <- "ctr"# merge 2 temp.dfs 
 pull3  <- rbind(temp.b,temp.a)
 # add pull date and sheet number 
 pull3$pull.date <- ymd("2022-01-11")
@@ -88,6 +96,9 @@ pull3$sheet     <- "A.9"
 # generate temp. df
 temp.b <- filter (Arl3, DateTime < "2022-02-01 12:00:00" )  # days before the sheet was pulled
 temp.a <- filter (CTR, DateTime >  "2022-02-01 12:00:00" )  # days after the sheet was pulled
+# add condition variable to temp.a and temp.b
+temp.b$condition <- "pull4"
+temp.a$condition <- "ctr"
 # merge 2 temp.dfs 
 pull4  <- rbind(temp.b,temp.a)
 # add pull date and sheet number 
@@ -98,6 +109,9 @@ pull4$sheet     <- "C.6"
 # generate temp. df
 temp.b <- filter (Arl3, DateTime < "2022-02-21 12:00:00" )  # days before the sheet was pulled
 temp.a <- filter (CTR, DateTime >  "2022-02-21 12:00:00" )  # days after the sheet was pulled
+# add condition variable to temp.a and temp.b
+temp.b$condition <- "pull5"
+temp.a$condition <- "ctr"
 # merge 2 temp.dfs 
 pull5  <- rbind(temp.b,temp.a)
 # add pull date and sheet number 
@@ -108,6 +122,9 @@ pull5$sheet     <- "B.4"
 # generate temp. df
 temp.b <- filter (Arl3, DateTime < "2022-03-18 12:00:00" )  # days before the sheet was pulled
 temp.a <- filter (CTR, DateTime >  "2022-03-18 12:00:00" )  # days after the sheet was pulled
+# add condition variable to temp.a and temp.b
+temp.b$condition <- "pull6"
+temp.a$condition <- "ctr"
 # merge 2 temp.dfs 
 pull6  <- rbind(temp.b,temp.a)
 # add pull date and sheet number 
