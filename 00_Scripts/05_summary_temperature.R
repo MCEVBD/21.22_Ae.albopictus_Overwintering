@@ -34,15 +34,17 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(chillR)
+library(ggplot2)
 
-### import data ###
+#### import data ####
 rm (list  = ls())
 #temperature data
 data  <- read.csv("00_Data/21.22_temperature.csv")
 # format correction
 data$DateTime <- ymd_hms(data$DateTime)
 data$number   <- as.factor(data$number)
-
+data$Month    <- month(data$DateTime)
+data$Month    <- as.factor(data$Month)
 # hatch data
 hatch <- read.csv("00_Data/21.22_section_survival_data.csv")
 # format correction
@@ -57,7 +59,8 @@ hatch <- filter(hatch, number != "7")
 Tt<- data %>% 
   filter(DateTime > "2021-12-31 24:00:00", DateTime < "2022-02-01 00:00:00") %>%  # filter to JAN
   group_by(number) %>%
-  dplyr::summarise(JANmeanT = mean(Tire),JANmeanA = mean(Air_Temp)) 
+  dplyr::summarise(JANmeanT = mean(Tire),JANmeanA = mean(Air_Temp),
+                   std.JANmeanT = sd(Tire, na.rm=T),std.JANmeanA = sd(Air_Temp, na.rm=T)) 
 #merge with summary DF
 hatch <- merge(hatch, Tt,"number")
 # correct format
@@ -74,7 +77,9 @@ hatch$JANmeanD <- -(abs(hatch$JANmeanT) - abs(hatch$JANmeanA))
 Tt<-data %>% 
   filter(DateTime > "2021-11-30 24:00:00", DateTime < "2022-03-01 00:00:00") %>%  # filter to DJF
   group_by(number) %>%
-  dplyr::summarise(DJFmeanT = mean(Tire),DJFmeanA = mean(Air_Temp))               # calcualte mean 
+  dplyr::summarise(DJFmeanT = mean(Tire),DJFmeanA = mean(Air_Temp),  # calcualte mean 
+                   std.DJFmeanT = sd(Tire, na.rm=T),std.DJFmeanA = sd(Air_Temp, na.rm=T) ) 
+              
 #merge with summary DF
 hatch <- merge(hatch, Tt,"number")
 # correct format
@@ -267,6 +272,7 @@ for (i in numbers) {
   data$GDD_n12_FULL[data$number == i] <- GDD(data$Tire[data$number == i], summ = T, Tbase = -12)
   hatch$GDD_n12_FULL[hatch$number == i] <-  max(data$GDD_n12_FULL[data$number == i])
 }
+
 
 
 ############ Saving files ###############

@@ -162,7 +162,7 @@ IL_stations$location[IL_stations$Station == "Carbondale"] <- "Car"
 
 IL_stations$DateTime <- mdy_hm(IL_stations$DateTime)
 IL_stations$wspd <- IL_stations$wspd_mph * 0.44704
-IL_stations$Solar <- IL_stations * 1000
+IL_stations$Solar <- IL_stations$Solar * 1000
 ############ Add location code to WI stations ##########
 
 Arl_station$location <- "Arl"
