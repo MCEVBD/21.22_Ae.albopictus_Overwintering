@@ -53,14 +53,43 @@ hatch$number <- as.factor(hatch$number)
 data <- filter(data, number != "7")
 hatch <- filter(hatch, number != "7")
 
+############ Calculate sheet_id realtive surival ########
+
+hatch$rel.per.sur.live[ hatch$sheet_id == 'A'] <-  
+  hatch$per.sur.live[hatch$sheet_id == 'A'] / 
+  hatch$per.sur.live[hatch$number == "0" & hatch$sheet_id == 'A']
+
+hatch$rel.per.sur.live[hatch$sheet_id == 'B'] <- 
+  hatch$per.sur.live[ hatch$sheet_id == 'B'] / 
+  hatch$per.sur.live[hatch$number == "0" & hatch$sheet_id == 'B']
+
+hatch$rel.per.sur.live[ hatch$sheet_id == 'C'] <- 
+  hatch$per.sur.live[ hatch$sheet_id == 'C'] / 
+  hatch$per.sur.live[hatch$number == "0" & hatch$sheet_id == 'C']
+
 ############ Mean Jan. Temperature #############
 ### TIRE and AIR ###
+
+#histogram
+data %>% 
+  filter(DateTime > "2021-12-31 24:00:00", DateTime < "2022-02-01 00:00:00") %>%
+  ggplot(aes(Tire, fill = location))+
+  geom_histogram(alpha= 0.6, position = 'identity')
+#density plot
+data %>% 
+  filter(DateTime > "2021-12-31 24:00:00", DateTime < "2022-02-01 00:00:00") %>%
+  ggplot(aes(Tire, group = location, fill = location))+
+  geom_density(alpha= 0.4, adjust = 1.5)
+
+
 
 Tt<- data %>% 
   filter(DateTime > "2021-12-31 24:00:00", DateTime < "2022-02-01 00:00:00") %>%  # filter to JAN
   group_by(number) %>%
   dplyr::summarise(JANmeanT = mean(Tire),JANmeanA = mean(Air_Temp),
+                   JANmedT = median(Tire), JANmedA = median(Air_Temp),
                    std.JANmeanT = sd(Tire, na.rm=T),std.JANmeanA = sd(Air_Temp, na.rm=T)) 
+
 #merge with summary DF
 hatch <- merge(hatch, Tt,"number")
 # correct format
@@ -78,8 +107,8 @@ Tt<-data %>%
   filter(DateTime > "2021-11-30 24:00:00", DateTime < "2022-03-01 00:00:00") %>%  # filter to DJF
   group_by(number) %>%
   dplyr::summarise(DJFmeanT = mean(Tire),DJFmeanA = mean(Air_Temp),  # calcualte mean 
+                   DJFmedT = median(Tire),DJFmedA = median(Air_Temp),
                    std.DJFmeanT = sd(Tire, na.rm=T),std.DJFmeanA = sd(Air_Temp, na.rm=T) ) 
-              
 #merge with summary DF
 hatch <- merge(hatch, Tt,"number")
 # correct format
@@ -274,10 +303,34 @@ for (i in numbers) {
 }
 
 
+########### Create tire average file version ########
+ hatch.bytire <- hatch %>%
+  group_by(loc.id)%>%
+  summarise( per.sur.live = mean(per.sur.live),
+             JANmeanT = mean(JANmeanT), JANmeanT_sd = mean(std.JANmeanT),
+             JANmedT  = mean(JANmedT),
+             JANmeanA = mean(JANmeanA), JANmeanA_sd = mean(std.JANmeanA),
+             JANmedA  = mean(JANmedA),
+             DJFmeanT = mean(DJFmeanT), DJFmeanT_sd = mean(std.DJFmeanT),
+             DJFmedT  = mean(DJFmedT),
+             DJFmeanA = mean(DJFmeanA), DJFmeanA_sd = mean(std.DJFmeanA),
+             DJFmedA  = mean(DJFmedA),
+             MinT     = mean(MinT),
+             MinA     = mean(MinA),
+             MinD     = mean(MinD), 
+             DaysB12T = mean(DaysB12T),
+             DaysB12A = mean(DaysB12A),
+             MAXHrsB12conT = mean(MAXHrsB12conT),
+             MAXHrsB12conA = mean(MAXHrsB12conA),
+             GDD_10_DJF = mean(GDD_10_DJF), GDD_n12_DJF = mean(GDD_n12_DJF),
+             GDD_10_FULL= mean(GDD_10_FULL), GDD_n12_FULL = mean(GDD_n12_FULL),
+             FreThaT = mean(FreThaT), FreThaA = mean(FreThaA))
 
+hatch.bytire$site <- substr(hatch.bytire$loc.id, 4,6) 
 ############ Saving files ###############
 
 #  write.csv(data, "00_Data/21.22_temperature_NO.Arl3.csv")
 #  write.csv(hatch, "00_Data/21.22_hatch_temperature_summary_NO.Arl3.csv")
+#  write.csv(hatch.bytire, "00_Data/21.22_bytire.hatch_temperature_summary_NO.Arl3.csv" )
 
 
