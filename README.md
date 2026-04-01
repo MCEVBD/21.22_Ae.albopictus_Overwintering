@@ -16,7 +16,7 @@ This repository contains the data and analysis scripts for a field study of over
 |------|-------------|
 | `section_survival_data.csv` | Egg-section-level hatch and survival outcomes for *Ae. albopictus* egg sheets deployed at six field sites and a laboratory control (CTR) during the 2021–22 overwintering season. Each row represents one egg-paper section placed inside a tire. |
 
-> **Note:** Raw temperature logger files (HOBO CSVs) and raw SNODAS snow-depth rasters are excluded from the repository via `.gitignore` and are not included in this deposit.
+> **Note:** Raw temperature logger files (HOBO CSVs) and raw SNODAS snow-depth rasters are excluded from the repository via `.gitignore` and are not included in this deposit. This will be updated in the near future 
 
 ### R Scripts (`00_Scripts/`)
 
