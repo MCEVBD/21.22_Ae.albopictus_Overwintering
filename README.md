@@ -66,19 +66,20 @@ This repository contains the data and analysis scripts for a field study of over
 | `id` | Categorical | Unique section identifier combining the sheet letter and a numeric code (e.g., `A.11`). Identifies the individual egg-paper section. | Format: `{sheet}.{number}` | No missing values. |
 | `loc.id` | Categorical | Location–tire identifier encoding the state, site, and tire number. | Format: `{state}_{site}_{tire}` (e.g., `IL_Bon_T1`, `WI_Arl_T3`). `CTR` for the laboratory control. `T1` = east-facing tire; `T2` = west-facing tire; `T3` = south-facing tire (Arlington only, staggered-removal experiment). | No missing values. |
 | `egg1` | Numeric (integer) | First count of eggs visible on the section under a dissecting microscope prior to hatching. | Count (dimensionless) | No missing values. |
-| `eeg1b` | Numeric (integer) | Second independent count of eggs on the same section (replicate count for quality assurance). | Count (dimensionless) | Blank = count was not recorded for that section. `NA` = count could not be obtained (e.g., damaged section). |
+| `eeg1b` | Numeric (integer) | Second independent count of eggs on the same section (replicate count for quality assurance). | Count (dimensionless) |`NA` = count could not be obtained (e.g., damaged section). |
 | `live.hatch1` | Numeric (integer) | Number of eggs that hatched and produced live larvae in the first hatch attempt. | Count (dimensionless) | No missing values. |
-| `live.hatch2` | Numeric (integer) | Number of eggs that hatched and produced live larvae in the second hatch attempt. | Count (dimensionless) | Blank = a second hatch attempt was not performed for that section. |
-| `live.hatch3` | Numeric (integer) | Number of eggs that hatched and produced live larvae in the third hatch attempt. | Count (dimensionless) | Blank = a third hatch attempt was not performed. All values are blank in this dataset. |
+| `live.hatch2` | Numeric (integer) | Number of eggs that hatched and produced live larvae in the second hatch attempt. | Count (dimensionless) | |
+| `live.hatch3` | Numeric (integer) | Number of eggs that hatched and produced live larvae in the third hatch attempt. | Count (dimensionless) |  |
 | `dead.hatch1` | Numeric (integer) | Number of eggs that hatched but produced dead (non-viable) larvae in the first hatch attempt. | Count (dimensionless) | No missing values. |
-| `dead.hatch2` | Numeric (integer) | Number of eggs that hatched but produced dead (non-viable) larvae in the second hatch attempt. | Count (dimensionless) | Blank = a second hatch attempt was not performed for that section. |
-| `dead.hatch3` | Numeric (integer) | Number of eggs that hatched but produced dead (non-viable) larvae in the third hatch attempt. | Count (dimensionless) | Blank = a third hatch attempt was not performed. All values are blank in this dataset. |
-| `x` | Numeric (double) | Longitude of the study site. | Decimal degrees, WGS 84 datum (EPSG:4326). Negative values indicate west of the Prime Meridian. | Blank = no field coordinates (applies to CTR laboratory control rows, which have no field location, and one Carbondale `IL_Car_T2` section `C.08` where the coordinate was not recorded). |
-| `y` | Numeric (double) | Latitude of the study site. | Decimal degrees, WGS 84 datum (EPSG:4326). Positive values indicate north of the Equator. | Blank = no field coordinates (same rows as `x`: CTR laboratory control and one Carbondale `IL_Car_T2` section `C.08`). |
+| `dead.hatch2` | Numeric (integer) | Number of eggs that hatched but produced dead (non-viable) larvae in the second hatch attempt. | Count (dimensionless) |  |
+| `dead.hatch3` | Numeric (integer) | Number of eggs that hatched but produced dead (non-viable) larvae in the third hatch attempt. | Count (dimensionless) |   |
+| `x` | Numeric (double) | Longitude of the study site. | Decimal degrees, WGS 84 datum (EPSG:4326). Negative values indicate west of the Prime Meridian. | Blank = no field coordinates (applies to CTR laboratory control rows, which have no field location).|
+| `y` | Numeric (double) | Latitude of the study site. | Decimal degrees, WGS 84 datum (EPSG:4326). Positive values indicate north of the Equator. | Blank = no field coordinates (same rows as `x`: CTR laboratory control). |
 
 ### Notes on Missing Values
 
 - **Blank cells** (empty strings) indicate that a measurement or observation was not taken or not applicable for that row, as described per-column above.
 - **`NA`** (explicit string) appears once in the `eeg1b` column (Hancock, sheet C, id C.15) and indicates that the replicate egg count could not be obtained.
-- The `live.hatch3` and `dead.hatch3` columns are entirely blank, indicating that a third hatch attempt was not conducted for any section.
 - CTR (laboratory control) rows lack geographic coordinates (`x`, `y`) because eggs were maintained under controlled laboratory conditions and were not deployed at a field site.
+
+*This README was generated with the assistance of AI. All information has been reviewed and the author confirms its accuracy* 
