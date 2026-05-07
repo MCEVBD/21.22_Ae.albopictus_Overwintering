@@ -41,9 +41,9 @@ library(tidyr)
 # temperature data
 dia  <- read.csv("00_Data/21.22_temperature.csv")
 # format corrections
-dia$DateTime <- mdy_hm(dia$DateTime)
+dia$DateTime <- ymd_hms(dia$DateTime)
 dia$number   <- as.factor(dia$number)
-dia$Date     <- mdy(dia$Date)
+dia$Date     <- date(dia$DateTime)
 
 # snow data
 snow <-  read.csv("00_Data/21.22_all_snow.csv")
@@ -83,7 +83,7 @@ east$number[east$location == 'Dek'] <- '8'
 east$number[east$location == 'Bon'] <- '10'
 
 # west tires (2,4,6,9,11,13)
-west$number <- '13' # Car_E id number
+west$number <- '13' # Car_W id number
 west$number[west$location == 'Spo'] <- '2'
 west$number[west$location == 'Han'] <- '4'
 west$number[west$location == 'Arl'] <- '6'
@@ -141,10 +141,13 @@ temp <- dia %>%
   group_by(number,Date) %>%
   dplyr::summarise(MeanT_Air = mean(Air_Temp), 
                    MeanT_Tire = mean(Tire),
+                   MeanT_Soil = mean(Soil),
                    MinT_Air = min(Air_Temp),
                    MinT_Tire = min(Tire),
+                   MinT_Soil = min(Soil),
                    MaxT_Air = max(Air_Temp),
-                   MaxT_Tire = max(Tire))
+                   MaxT_Tire = max(Tire),
+                   MaxT_Soil = max(Soil))
   
 # calculate difference values 
 temp$MeanT_Diff <- temp$MeanT_Tire - temp$MeanT_Air

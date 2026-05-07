@@ -113,6 +113,13 @@ ggplot(data, aes(Date, MeanT_Tire))+
   geom_line(aes(Date, MeanT_Air) ,col = "red")+
   facet_wrap(~location,nrow = 6)
 
+data %>%
+  filter(Date >= "2021-12-01", Date <= "2022-02-28") %>%
+  ggplot( aes(Date, MeanT_Tire))+
+  geom_line(col = "black") +
+  geom_line(aes(Date, MeanT_Air) ,col = "red")+
+  facet_wrap(~location,nrow = 6) +
+  geom_hline(yintercept = -2.5,  linetype= "dashed")
 #### Comparative Plots ####
 
 #' **Plot 1:** Air and tire temperature (color by cover)

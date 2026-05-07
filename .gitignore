@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
 # RAW data files 
 00_Data/01_RAW_Snowdepth/
 00_Data/01_RAW_temperature/

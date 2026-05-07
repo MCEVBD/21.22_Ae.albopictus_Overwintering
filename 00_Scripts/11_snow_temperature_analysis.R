@@ -18,40 +18,40 @@
 #'     pdf of MeanT_Tire is normal
 #'
 #'   1. Null model (null): MeanT_Tire ~ 1
-#'     - AIC: 15960
-#'     - Diagnostic plots: 
+#'      - AIC: 15960
+#'      - Diagnostic plots: 
 #'   2. Include MeanT_Ambient (air): MeanT_Tire ~ MeanT_Ambient
-#'     - AIC: 8364.4
-#'     - log Lik.' -4179.184 (df=3)
-#'     - Diagonostic plots: 
+#'      - AIC: 8364.4
+#'      - log Lik.' -4179.184 (df=3)
+#'      - Diagonostic plots: 
 #'   3. Include SNODAS (snow): MeanT_Tire ~ MeanT_Ambient + snow_FAC10
-#'     - AIC: 8086.5
-#'     - 'log Lik.' -4036.231 (df=7)
-#'     - Diagonostic plots: 
+#'      - AIC: 8086.5
+#'      - 'log Lik.' -4036.231 (df=7)
+#'      - Diagonostic plots: 
 #'   4. air and SNODAS intereaction (snowplus): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10)
-#'     - AIC: 7059
-#'     - 'log Lik.' -3518.48 (df=11)
-#'     - I am questioning the values and the biolgical relevence of including this intereaction. I think that 
+#'      - AIC: 7059
+#'      - 'log Lik.' -3518.48 (df=11)
+#'      - I am questioning the values and the biolgical relevence of including this intereaction. I think that 
 #'     it is creating problems b/c snow and air temp are correlated loosely 
 #'   5. add site as random effect (siteR) :MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site)
-#'     - AIC: 7020.697
-#'     - 'log Lik.' -3498.348 (df=12)
-#'     ** SELECTED MODEL **
+#'      - AIC: 7020.697
+#'      - 'log Lik.' -3498.348 (df=12)
+#'      - ** SELECTED MODEL **
 #'   6. siteR minus air:snow interaction (siteRmin): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (1|site)
-#'     - AIC: 8045.815
-#'     - 'log Lik.' -4014.908 (df=8)
+#'      - AIC: 8045.815
+#'      - 'log Lik.' -4014.908 (df=8)
 #'   7. add date to min model (datemin): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + date + (1|site) 
-#'     - AIC:8058.785
-#'     - 'log Lik.' -4020.393 (df=9)
-#'     **reduced fit**
+#'      - AIC:8058.785
+#'      - 'log Lik.' -4020.393 (df=9)
+#'      - **reduced fit**
 #'   8. add date to plus model (dateplus): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + date + (1|site) 
-#'     - AIC:7016.85
-#'     - 'log Lik.' -3495.425 (df=13)
-#'     **minimal fit improvment** compared to snowplus
+#'      - AIC:7016.85
+#'      - 'log Lik.' -3495.425 (df=13)
+#'        **minimal fit improvment** compared to snowplus
 #'   9. inlcude lat (lat): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + y
 #'      - AIC : 8085.64
 #'      - 'log Lik.' -4034.81 (df=8)
-#'      ** model fit NOT improved **
+#'        ** model fit NOT improved **
  
 # Libraries #
 library(lubridate)
@@ -61,6 +61,7 @@ library(ggplot2)
 library(sjPlot) #for plotting lmer and glmer mods
 
 #### 21/22 data ####
+setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 data <- read.csv('00_Data/21.22_snow_temperature.csv')
 # format corrections
 data$number   <- as.factor (data$number)
@@ -97,6 +98,7 @@ plot_model(m18.19,
 
 #### Independed regression development ####
 
+hist(data$MeanT_Tire)
 #### 1.Null model ####
 null <- glm(MeanT_Tire ~ 1, data = data)
 summary(null)
