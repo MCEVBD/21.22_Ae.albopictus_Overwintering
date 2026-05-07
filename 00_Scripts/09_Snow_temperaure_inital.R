@@ -35,11 +35,14 @@
 #'
 
 
+#### import data ####
+rm (list  = ls())
 #libraries
 
 library(ggplot2)
 library(lubridate)
 library(dplyr)
+library(cowplot)
 
 #### Import ####
 
@@ -50,16 +53,42 @@ data$Date     <- ymd (data$Date)
 data$location <- factor (data$location, levels = c("Car", "Bon", "Dek", "Arl", "Han", "Spo"))
 data          <- filter (data, Date < "2022-04-14" )
 
+### first snow day ###
+
+data %>%
+  filter(snodas >= 1) %>%
+  group_by(location) %>%
+  summarise(firstsnodas = min(Date))
+
+data %>%
+  filter(depth_G >= 1) %>%
+  group_by(location) %>%
+  summarise(firstsnow = min(Date))
+
+#### MAX snow ####
+
+data %>%
+  group_by(location) %>%
+  summarise( max_snow = max (depth_G, na.rm = T),
+             max_snodas = max( snodas))
+
 #### Plots through time ####
 
 #'
-#' **Plot 1:** Depth on ground v time 
+#' **Plot 1a and 1b:** Depth on ground (measurement and SNODAS) v time
 #' 
 
-ggplot(data, aes(Date, depth_G, col = location))+
+a <- ggplot(data, aes(Date, depth_G, col = location))+
   geom_point() +
   geom_smooth(span = 0.3) +
   ylim(0,300)
+
+b <- ggplot(data, aes(Date,snodas , col = location))+
+  geom_point() +
+  geom_smooth(span = 0.3) +
+  ylim(0,300)
+
+plot_grid(a,b)
 #'
 #' **Plot 2:** Depth on tires v time 
 #'

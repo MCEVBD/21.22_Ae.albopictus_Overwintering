@@ -39,67 +39,76 @@
 #'     -diagnostic plots: improved
 #' 7. longplus with long and snow_depth interaction (longplus2) : depth_G ~ snow_depth + y + x + y:snow_depth + x:y + x:snow_depth
 #'     - AIC: 35627
-#'     - diagnostic plots:  simiilar
+#'     - diagnostic plots:  similar
 #' 8. date added (date) : depth_G ~ snow_depth + y + x + date + y:snow_depth + x:y + x:snow_depth
 #'     - AIC: 35269 **(reduced fit)** DO NOT SELECT
 #' 
 
+rm (list  = ls())
 
 # libraries
 
 library(lubridate)
 library(sjPlot)
+library(broom)
 
 #### IMPORT DATA ####
 
 snow <- read.csv("00_Data/21.22_all_snow.csv")
 # format corrections
-snow$date <- ymd(snow$date)
+snow$Date <- ymd(snow$date)
+
+
+# pearson correlation test: 
+cor.test(snow$snow_depth, snow$depth_G, method = "pearson")
 
 ##### Null Moodel ####
 
 null <- glm(depth_G ~ 1, family = poisson, snow)
 summary(null)
-plot(null)
+#plot(null)
 
 #### Model 2 ####
 
 simple <- glm(depth_G ~ snow_depth, family = poisson, snow)
 summary(simple)
-plot(simple)
-
+tidy(simple)
+#plot(simple)
+#tab_model(simple)
+#plot_model(simple)
 #### Model 3 ####
 
 lat <-  glm(depth_G ~ snow_depth + y, family = poisson, snow)
 summary(lat)
-plot(lat)
+tidy(lat)
+#plot(lat)
 
 #### Model 4 ####
 
 latplus <- glm(depth_G ~ snow_depth + y + y:snow_depth, family = poisson, snow)
 summary(latplus)
-plot(latplus)
+#plot(latplus)
 
 #### Mdoel 5 ####
 
 long <- glm(depth_G ~ snow_depth + y + x + y:snow_depth, family = poisson, snow)
 summary(long)
-plot(long)
+#plot(long)
 
 #### Model 6 ####
 
 longplus <- glm(depth_G ~ snow_depth + y + x + y:snow_depth + x:y, family = poisson, snow)
 summary(longplus)
-plot(longplus)
+#plot(longplus)
 
 #### Model 7 ####
 
-longplus2 <- glm(depth_G ~ snow_depth + y + x + y:snow_depth + x:y + x:snow_depth, family = poisson, snow)
+longplus2 <- lm(depth_G ~ snow_depth + y + x + y:snow_depth + x:y + x:snow_depth, family = poisson, snow)
 summary(longplus2)
-plot(longplus2)
+#plot(longplus2)
 #### Model 8 ####
 
 date <- glm(depth_G ~ snow_depth + y + x + date + y:snow_depth + x:y + x:snow_depth, family = poisson, snow)
 summary(date)
-plot(date)
+#plot(date)
 

@@ -1,0 +1,472 @@
+---
+title: "14 Inital survival Analysis"
+author: "Katie M Susong"
+date: "03-June-22"
+---
+
+
+
+Overview
+========
+
+Initial plots and correlation for survival/hatch rate.
+
+Plots and Analysis
+-------------------
+  1. histogram of percent survival
+         - the distribution is skewed to 0, given bounding at 0 and 1 pdf = beta
+WITHIN THE TIRES 
+  2. GDDs
+      a. Plots 
+            i. histogram
+           ii. correlation scatter plots 
+      b. Correlation tests : all measures show some correlation
+            i.    GDDdjf10     : Highly correlated (0.906, p = 0.0001)
+            ii.   GDDfull10    : Highly correlated ( 0.8827, p = 0.0003)
+            iii.  GDDdjf -12   : Highly correlated (0.906, p = 0.0001)
+            vi.   GDDfull -12  : Highly correlated ( 0.8827, p = 0.0003)
+      c. Regression
+            i.   null model: per.sur.live ~ 1 
+            ii.  GDDdjf10 
+            iii. GDDfull10
+            vi.  GDDdjf -12
+            v.   GDDfull -12
+  3. Mean Jan T
+      a. Plots 
+      b. Correlation tests   : correlated (0.8269, p = 0.002)
+      c. Regression
+  4. Days below -12 
+      a. Plots 
+      b. Correlation tests   : correlated (-0.7635, p = 0.006) 
+      c. Regression 
+  5. Max Cons. Hrs below -12
+      a. Plots 
+      b. Correlation tests   : correlated (-0.7997, p = 0.0031)
+      c. Regression 
+  6. Min temperature
+      a. Plots 
+      b. Correlation tests   : correlated (0.7649, p = 0.0061)  
+      c. Regression 
+  7. Freeze-Thaw events
+      a. Plots 
+      b. Correlation tests   : not correlated (-0.2416, p = 0.4741)
+      c. Regression 
+      
+OUTSIDE THE TIRE 
+  8. Mean Jan ext. temperature
+      a. plot
+      b. Correlation test : correlated (0.7817952, p = 0.002665)
+      c. Regression 
+  9. external days below -12 
+      a. plot
+      b. Correlation test :  correlated (corr = -0.6952378, p = 0.01755)
+      c. Regression - NA
+  10. external 
+      a. plot
+      b. Correlation test : survival is  not correlated (corr = -0.6952378, p = 0.01755)
+      c. Regression - NA
+```{r Libraries, Functions, Data}
+rm (list  = ls())
+#libraries# 
+library(dplyr)
+library(ggplot2)
+library(betareg)
+library(sjPlot)
+library(patchwork)
+
+#### Functions ####
+overdisp_fun <- function(model) {
+  rdf <- df.residual(model)
+  rp <- residuals(model,type="pearson")
+  Pearson.chisq <- sum(rp^2)
+  prat <- Pearson.chisq/rdf
+  pval <- pchisq(Pearson.chisq, df=rdf, lower.tail=FALSE)
+  c(chisq=Pearson.chisq,ratio=prat,rdf=rdf,p=pval)
+}
+
+
+#### Import data ####
+setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
+# import data avg. to the tire level 
+tire <- read.csv("00_Data/21.22_bytire.hatch_temperature_summary_NO.Arl3.csv")
+# format corrections
+tire <- subset(tire, select = -c(X))
+tire$site    <- factor(tire$site, levels = c("", "Car", "Bon", "Dek", "Arl", "Han", "Spo"))
+tire$loc.id <- factor(tire$loc.id, levels = c("CTR",
+                                              "IL_Car_T1", "IL_Car_T2",
+                                              "IL_Bon_T1", "IL_Bon_T2",
+                                              "IL_Dek_T1", "IL_Dek_T2",
+                                              "WI_Arl_T1", "WI_Arl_T2",
+                                              "WI_Han_T1", "WI_Han_T2",
+                                              "WI_Spo_T1" ,"WI_Spo_T2"))
+
+# import data avg. to the site
+site <- read.csv("00_Data/21.22_bysite.hatch_temperature_summary_NO.Arl3.csv")
+# format
+site$site    <- factor(site$site, levels = c("CTR", "Car", "Bon", "Dek", "Arl", "Han", "Spo"))
+site <- subset(site, select = -c(X))
+
+# filter control out of df
+site_n <- site %>%
+  filter( site != "CTR") 
+tire_n <- tire %>%
+  filter( loc.id != "CTR")%>%
+  filter( loc.id != "WI_Arl_T2")
+```
+
+### 1. histogram of percent survival
+Positive skewed pdf. Large number of 0s. could be rare event zero inflation. (Ref. for 
+zero inflation [here](https://espace.library.uq.edu.au/data/UQ_9053/tm_ele_8_05.pdf?Expires=1655991548&Key-Pair-Id=APKAJKNBJ4MJBJNC6NLQ&Signature=BFqhZraaKjEPZ-bfYlqtT7R2wdjr9rRiS3ZKp8Gc16QDLOOKaGW3o3btT5feWJALXUJnwfPRDWuwyv0qjHxHDB9UPCHGZMnUq0rUBBpBbQaDo2lukL~hEG2BA9v4nU1uDdrBbKb8S2-F8Re-4BeukFj9upWsoLwgJMprW0L32pJEdvZxE1q42AqhE1Ct3VzrtE9Qp1EJgzQQpaCUsTnF2DKOHmQBOXF2qX6N0qEkS1OITfivynX~S~1vrj0hYkYZF1qoEqmZV-OKnX7DOHSKj1-SbYJHB0G~e2W6V85dFGWKjDFzds2UiyexKcHTpQlNeh1FIuUIFGTOnUceK0Tbrw__) )
+```{r 1. histogram of percent survival, echo=FALSE}
+hist(tire$per.sur.live)
+```
+
+----------------------------------------------------------------
+## Variable from WITH IN THE TIRES
+### 2. GDDs v survival 
+#### a. Plots
+```{r GDDS histograms, echo=FALSE}
+#' minimal distribution. high or low value
+par(mfrow=c(2,2))
+hist(tire$GDD_10_DJF)
+hist(tire$GDD_n12_DJF)
+hist(tire$GDD_10_FULL)
+hist(tire$GDD_n12_DJF)
+par(mfrow=c(1,1))
+```
+FIGURE NOTES:
+
+ + Car (the site with the highest survival) has a much larger number of GDDs 
+       regardless of metric
+ + Over all there does not seem to be a strong trend for the corr between sur. and any GDDs
+```{r 3a. Plots}
+p1 <- ggplot(tire_n, aes(GDD_10_DJF, per.sur.live)) +
+  geom_point(aes(col = site))+
+  ggtitle("GDD_10_DJF")
+
+p2 <- ggplot(tire, aes(GDD_n12_DJF, per.sur.live, col = site)) +
+  geom_point() +
+  ggtitle("GDD_n12_DJF")
+
+p3 <- ggplot(tire, aes(GDD_10_FULL, per.sur.live, col = site)) +
+  geom_point() +
+  ggtitle("GDD_10_FULL")
+
+p4 <- ggplot(tire, aes(GDD_n12_FULL, per.sur.live, col = site)) +
+  geom_point() +
+  ggtitle("GDD_n12_FULL")
+
+p1 +p3 + p2+ p4
+```
+
+
+#### b.Correlation tests
+CORRELATION TEST NOTE:
+ 
+ + For all measurements of GDD: Per.sur is significantly correlated to the number of GDDS 
+
+```{r GDDS Corr, echo=TRUE}
+# Pearson correlation test for each GDDs metric
+cor.test(tire_n$per.sur.live, tire_n$GDD_10_DJF, method = "pearson")
+cor.test(tire_n$per.sur.live, tire_n$GDD_n12_DJF, method = "pearson")
+cor.test(tire_n$per.sur.live, tire_n$GDD_10_FULL, method = "pearson")
+cor.test(tire_n$per.sur.live, tire_n$GDD_n12_FULL, method = "pearson")
+```
+
+#### c. Regression
+```{r}
+# return to 2,2 plots of model test plots 
+par(mfrow=c(2,2))
+```
+
+**Null Model**
+```{r}
+# null model 
+null <- glm(per.sur.live ~ 1, data = tire)
+summary(null)
+```
+
+**GDD (set to temperatures => 10 ºC) during DJF**
+```{r}
+GDDdjf10 <- glm(per.sur.live ~ GDD_10_DJF, data = tire_n) # GDD (djf 10ºC)
+summary(GDDdjf10)
+# measures of fitness 
+plot(GDDdjf10)          # fitness plots
+overdisp_fun(GDDdjf10)  # overdisp. function 
+tab_model(GDDdjf10)
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: even variance, homoscedasticity
+ + Normal Q-Q:  1.0 + quarterly showing some non-linearity
+ + Scale-Location: some pattern in the residuals, generally horizontal
+ + Residual vs Leverage: Obs. 4 and 5 are influential
+ + over dispersal: Not significantly overdisp. 
+
+ **GDD (set to temperatures => 10 ??C) during full time**
+```{r}
+GDDfull10 <- glm(per.sur.live ~ GDD_10_FULL, data = tire_n) # GDD (full 10C)
+summary(GDDfull10)
+plot(GDDfull10)
+overdisp_fun(GDDfull10)
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: Some change in variance of residuals. Trend of residuals is noted
+ + Normal Q-Q:  1.0 + Theo. Quantiles are not linear 
+ + Scale-Location: strong pattern in residuals 
+ + Residual vs Leverage: obs. 1 and 4 have strong leverage 
+ + over dispersal: is not significantly overdisp.
+
+**GDD (set to temperatures => -12 C) during DJF time**
+```{r}
+# GDD (full 10??C)
+GDDdjfn12 <- glm(per.sur.live ~ GDD_n12_DJF, data = tire_n)
+summary(GDDdjfn12)
+plot(GDDdjfn12)
+overdisp_fun(GDDdjfn12)
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: limited heteroscedasticity
+ + Normal Q-Q:  1.0 + Theo. Quantiles are not linear 
+ + Scale-Location: mild trend in small predicted values
+ + Residual vs Leverage:  obs. 4 and 5 have strong leverage
+ + over dispersal: is not overdisp.
+
+**GDD (set to temperatures => -12 C) during Full time**
+```{r}
+# GDD (full 10??C)
+GDDfulln12 <- glm(per.sur.live ~ GDD_n12_FULL, data = tire_n)
+summary(GDDfulln12)
+plot(GDDfulln12)
+overdisp_fun(GDDfulln12)
+
+plot_model(GDDfulln12)
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: trend in variance, possible heteroscad. 
+ + Normal Q-Q:  1.0 + Theo. Quantiles are not linear 
+ + Scale-Location: strong trend
+ + Residual vs Leverage: obs. 1 and 4 have strong leverage
+ + over dispersal: in not overdisp.
+
+### 3. Survival v Mean Jan tire temperature 
+#### a. Plots
+```{r}
+ggplot(tire, aes(JANmeanT, per.sur.live, col = site))+
+  geom_point()
+```
+#### b. Correlation test
+CORRELATION TEST NOTES:
+
+ + Survival is strongly correlated to the internal tire temperature. Corr = 0.8269 (p=0.001)
+ 
+```{r}
+# Pearson correlation test
+cor.test(tire_n$per.sur.live, tire_n$JANmeanT, method = "pearson")
+```
+#### c. Regression 
+```{r}
+reg.JanMeanT <- glm(per.sur.live ~ JANmeanT, data = tire_n)
+# summary
+summary(reg.JanMeanT)
+plot(reg.JanMeanT)
+overdisp_fun(reg.JanMeanT)
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: generally even distribution
+ + Normal Q-Q:  generally linear
+ + Scale-Location: some pattern in the residuals, generally horizontal
+ + Residual vs Leverage: Obs. 3 is influential
+ + over dispersal: Not significantly overdisp. 
+ 
+### 4. Survival v DaysB12T
+#### a. Plots 
+```{r}
+ggplot(tire, aes(DaysB12T, per.sur.live, col = site))+
+  geom_point()
+```
+#### b. Correlation test
+CORRELATION TEST NOTES:
+
+ + survival is strongly correlated to the number of Days below -12C ( Corr = -0.763, p = 0.006)
+ 
+```{r}
+# Pearson correlation test
+cor.test(tire_n$per.sur.live, tire_n$DaysB12T, method = "pearson")
+```
+#### c. Regression 
+```{r}
+reg.DaysB12T <- glm(per.sur.live ~ DaysB12T, data = tire_n)
+# summary
+summary(reg.DaysB12T)
+plot(reg.DaysB12T)
+overdisp_fun(reg.DaysB12T)
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: possible slight hetorscad. slight if present. 
+ + Normal Q-Q:  generally linear
+ + Scale-Location: some pattern in the residuals, upperward trend later in predicted values 
+ + Residual vs Leverage: Obs. 3 is influential
+ + over dispersal: Not significantly overdisp. 
+
+### 5. Survival v hrB12Tcon
+#### a, Plot 
+```{r}
+ggplot(tire_n[c(1:7, 9:12),], aes(MAXHrsB12conT, per.sur.live, col = site))+
+  geom_point()
+```
+#### b. Correlation test
+CORRELATION TEST NOTES:
+
+ + survival is not significantly correlated to the number of MAX number of consecutive hours below  below -12C ( Corr = -0.5169, p = 0.0853)
+ 
+```{r}
+# Pearson correlation test
+cor.test(tire_n[c(1:7, 9:12),]$per.sur.live, tire_n[c(1:7, 9:12),]$MAXHrsB12conT, method = "pearson")
+```
+#### c. Regression 
+```{r}
+reg.MAXHrsB12conT <- glm(per.sur.live ~ MAXHrsB12conT, data = tire_n[c(1:7, 9:12),])
+# summary
+summary(reg.MAXHrsB12conT )
+plot(reg.MAXHrsB12conT )
+overdisp_fun(reg.MAXHrsB12conT )
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: heteroscad. 
+ + Normal Q-Q:  generally linear, upward trend after 1.0 T.Qu
+ + Scale-Location: pattern in the residuals, upward trend later in predicted values 
+ + Residual vs Leverage: Obs. 3 and 8 is influential
+ + over dispersal: Not significantly overdisp. 
+
+### 6. Survival v MinT
+#### a, Plot 
+```{r}
+ggplot(tire, aes(MinT, per.sur.live, col = site))+
+  geom_point()
+```
+#### b. Correlation test
+CORRELATION TEST NOTES:
+
+ + survival is  significantly correlated to the minimum temperature (corr = 0.764, p = 0.0061)
+ 
+```{r}
+# Pearson correlation test
+cor.test(tire_n$per.sur.live, tire_n$MinT, method = "pearson")
+```
+#### c. Regression 
+```{r}
+reg.MinT <- glm(per.sur.live ~ MinT, data = tire_n)
+# summary
+summary(reg.MAXHrsB12conT )
+plot(reg.MAXHrsB12conT )
+overdisp_fun(reg.MAXHrsB12conT )
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: heteroscad. 
+ + Normal Q-Q:  generally linear, upward trend after 1.0 T.Qu
+ + Scale-Location: pattern in the residuals, upward trend later in predicted values 
+ + Residual vs Leverage: Obs. 3 and 8 is influential
+ + over dispersal: Not significantly overdisp. 
+
+### 7. Survival v FreThaT
+#### a, Plot 
+```{r}
+ggplot(tire_n[c(1:7, 9:12),], aes(FreThaT, per.sur.live, col = site))+
+  geom_point()
+```
+#### b. Correlation test
+CORRELATION TEST NOTES:
+
+ + survival is not significantly correlated to the number of freeze thaw events( Corr = -0.242, p = 0.474)
+ 
+```{r}
+# Pearson correlation test
+cor.test(tire_n[c(1:7, 9:12),]$per.sur.live, tire_n[c(1:7, 9:12),]$FreThaT, method = "pearson")
+```
+#### c. Regression 
+```{r}
+reg.FreThaT <- glm(per.sur.live ~ FreThaT, data = tire_n[c(1:7, 9:12),])
+# summary
+summary(reg.FreThaT )
+plot(reg.MAXHrsB12conT )
+overdisp_fun(reg.MAXHrsB12conT )
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: heteroscad. 
+ + Normal Q-Q:  generally linear, upward trend after 1.0 T.Qu
+ + Scale-Location: pattern in the residuals, upward trend later in predicted values 
+ + Residual vs Leverage: Obs. 3 and 8 is influential
+ + over dispersal: Not significantly overdisp. 
+
+## Variables from OUTSIDE THE TIRE
+### 8. Survival v Mean Jan ext. temperature
+#### a, Plot 
+```{r}
+ggplot(tire_n, aes(JANmeanA, per.sur.live, col = site))+
+  geom_point()
+```
+#### b. Correlation test
+CORRELATION TEST NOTES:
+
+ + survival is  significantly correlated to the minimum temperature (corr = 0.764, p = 0.0061)
+ 
+```{r}
+# Pearson correlation test
+cor.test(tire_n$per.sur.live, tire_n$JANmeanA, method = "pearson")
+```
+#### c. Regression 
+```{r}
+reg.JANmeanA <- glm(per.sur.live ~ JANmeanA, data = tire_n)
+# summary
+summary(reg.JANmeanA )
+plot(reg.JANmeanA )
+overdisp_fun(reg.JANmeanA )
+```
+MODEL FITNESS
+
+ + Residuals vs Fitted: heteroscad. 
+ + Normal Q-Q:  generally linear, upward trend after 1.0 T.Qu
+ + Scale-Location: pattern in the residuals, upward trend later in predicted values 
+ + Residual vs Leverage: Obs. 3 and 8 is influential
+ + over dispersal: Not significantly overdisp. 
+
+### 9. Survival v Days below -12??C
+#### a. Plot
+```{r}
+ggplot(tire_n, aes(DaysB12A, per.sur.live, col = site))+
+  geom_point()
+```
+#### b. Correlation test
+CORRELATION TEST NOTES:
+
+ + survival is  not correlated (corr = -0.6952378 
+, p = 0.01755)
+ 
+```{r}
+# Pearson correlation test
+cor.test(tire_n$per.sur.live, tire_n$DaysB12A, method = "pearson")
+```
+### 10. External Max Cons. Hrs below -12
+#### a. Plot
+```{r}
+ggplot(tire_n, aes(MAXHrsB12conA, per.sur.live, col = site))+
+  geom_point()
+```
+#### b. Correlation test
+CORRELATION TEST NOTES:
+
+ + survival is  significantly correlated to the minimum temperature (corr = 0.764, p = 0.0061)
+ 
+```{r}
+# Pearson correlation test
+cor.test(tire_n$per.sur.live, tire_n$MAXHrsB12conA, method = "pearson")
+```

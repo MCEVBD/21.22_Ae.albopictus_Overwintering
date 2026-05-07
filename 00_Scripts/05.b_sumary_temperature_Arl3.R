@@ -40,7 +40,7 @@ library(chillR)
 #temperature data
 data  <- read.csv("00_Data/21.22_temperature_Arl3.csv")
 # format correction
-data$DateTime <- mdy_hm(data$DateTime)
+data$DateTime <- ymd_hms(data$DateTime)
 data$Date     <- mdy(data$Date)
 data$number   <- as.factor(data$number)
 data$sheet    <- as.factor(data$sheet)
@@ -167,7 +167,11 @@ hatch$DaysB12A <- as.numeric(hatch$DaysB12A)
 
 # empty DF
 ColdDays <- data.frame("sheet"= rep(NA,13), "MAXHrsB12conT" = rep(NA,13))
-for (x in list(levels(data$sheet)) {
+for (x in list(levels(data$sheet))) {
+  
+}
+
+for ( x in list(levels(data$sheet))) {
   Tt <- data %>%
     filter (sheet == x)                        # filter by site sheet
   Tt$below0 <- ifelse(Tt$Tire < -12, TRUE, FALSE) # create bool. variable
@@ -175,7 +179,7 @@ for (x in list(levels(data$sheet)) {
   rBelow <- r$lengths[c(FALSE,TRUE)]            # extract only T in a row
   MaxBelow <-round(max(rBelow), 0)              # convert to days, round
   ColdDays[x,] <- c(x, MaxBelow)                # add to DF
-}
+  }
 
 #merge with summary DF
 hatch <- merge(hatch, ColdDays,"sheet", all.x = TRUE)
@@ -184,7 +188,7 @@ hatch <- merge(hatch, ColdDays,"sheet", all.x = TRUE)
 
 # empty DF
 ColdDays <- data.frame("sheet"= rep(NA,13), "MAXHrsB12conA" = rep(NA,13))
-for (x in list(levels(data$sheet)) {
+for (x in list(levels(data$sheet))) {
   Tt <- data %>%
     filter (sheet == x)  %>%                   # filter by site sheet
     drop_na(Air_Temp)                           # remove na values  
@@ -256,7 +260,7 @@ for (i in sheets) {
 DJF.s <- data.frame("DateTime"    = DJF$DateTime,
                     "sheet"      = DJF$sheet,
                     "GDD_10_DJF"  = DJF$GDD_10_DJF, 
-                    "GDD_n12_DJF" = DJF$GDD_n12_DJF)
+                    "GDD_n12_DJF" = DJF$GDD_n12_DJF )
 data <- merge(data, DJF.s, by = c("DateTime", "sheet"), all.x = T)
 
 

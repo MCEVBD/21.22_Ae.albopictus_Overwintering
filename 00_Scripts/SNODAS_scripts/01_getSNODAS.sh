@@ -18,10 +18,10 @@ cd Data
 
 for months in "10_Oct" "11_Nov" "12_Dec" 
     do
-	  wget -N ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/2021/"$months"/*.tar
+	  wget -N ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/2003/"$months"/*.tar
     done
     
 for months in "01_Jan" "02_Feb" "03_Mar" "04_Apr"
     do
-	  wget -N ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/2022/"$months"/*.tar
+	  wget -N ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/2004/"$months"/*.tar
     done

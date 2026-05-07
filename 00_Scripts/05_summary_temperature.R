@@ -302,11 +302,23 @@ for (i in numbers) {
   hatch$GDD_n12_FULL[hatch$number == i] <-  max(data$GDD_n12_FULL[data$number == i])
 }
 
+#################First frost day###########
+
+data %>%
+  filter( Air_Temp <= 0) %>%
+  group_by(location) %>%
+  summarise(firstfrost = min(DateTime))
+
+data %>%
+  filter( Tire <= 0) %>%
+  group_by(location) %>%
+  summarise(firstfrost = min(DateTime))
 
 ########### Create tire average file version ########
  hatch.bytire <- hatch %>%
   group_by(loc.id)%>%
   summarise( per.sur.live = mean(per.sur.live),
+             SD_per.sur.live = sd(per.sur.live,na.rm=T),
              JANmeanT = mean(JANmeanT), JANmeanT_sd = mean(std.JANmeanT),
              JANmedT  = mean(JANmedT),
              JANmeanA = mean(JANmeanA), JANmeanA_sd = mean(std.JANmeanA),
@@ -327,10 +339,37 @@ for (i in numbers) {
              FreThaT = mean(FreThaT), FreThaA = mean(FreThaA))
 
 hatch.bytire$site <- substr(hatch.bytire$loc.id, 4,6) 
+
+########### Create site average file version ########
+hatch.bysite <- hatch %>%
+  group_by(site)%>%
+  summarise( per.sur.live = mean(per.sur.live),
+             SD_per.sur.live = sd(per.sur.live,na.rm=T),
+             JANmeanT = mean(JANmeanT,na.rm=T), JANmeanT_sd = mean(std.JANmeanT,na.rm=T),
+             JANmedT  = mean(JANmedT,na.rm=T),
+             JANmeanA = mean(JANmeanA,na.rm=T), JANmeanA_sd = mean(std.JANmeanA),
+             JANmedA  = mean(JANmedA,na.rm=T),
+             DJFmeanT = mean(DJFmeanT,na.rm=T), DJFmeanT_sd = mean(std.DJFmeanT),
+             DJFmedT  = mean(DJFmedT,na.rm=T),
+             DJFmeanA = mean(DJFmeanA), DJFmeanA_sd = mean(std.DJFmeanA),
+             DJFmedA  = mean(DJFmedA),
+             MinT     = mean(MinT),
+             MinA     = mean(MinA,na.rm=T),
+             MinD     = mean(MinD), 
+             DaysB12T = mean(DaysB12T),
+             DaysB12A = mean(DaysB12A),
+             MAXHrsB12conT = mean(MAXHrsB12conT),
+             MAXHrsB12conA = mean(MAXHrsB12conA),
+             GDD_10_DJF = mean(GDD_10_DJF), GDD_n12_DJF = mean(GDD_n12_DJF),
+             GDD_10_FULL= mean(GDD_10_FULL), GDD_n12_FULL = mean(GDD_n12_FULL),
+             FreThaT = mean(FreThaT), FreThaA = mean(FreThaA))
+
+hatch.bytire$site <- substr(hatch.bytire$loc.id, 4,6) 
 ############ Saving files ###############
 
-#  write.csv(data, "00_Data/21.22_temperature_NO.Arl3.csv")
-#  write.csv(hatch, "00_Data/21.22_hatch_temperature_summary_NO.Arl3.csv")
-#  write.csv(hatch.bytire, "00_Data/21.22_bytire.hatch_temperature_summary_NO.Arl3.csv" )
+#write.csv(data, "00_Data/21.22_temperature_NO.Arl3.csv")
+#write.csv(hatch, "00_Data/21.22_hatch_temperature_summary_NO.Arl3.csv")
+#write.csv(hatch.bytire, "00_Data/21.22_bytire.hatch_temperature_summary_NO.Arl3.csv" )
 
 
+hist(data$MeanT_Air) + hist(data$MeanT_Tire)

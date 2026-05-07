@@ -86,7 +86,8 @@ dia %>%
 dia %>%
   filter(DateTime < "2022-05-10 24:00:00") %>%
   ggplot(aes(Tire,Air_Temp, col = location))+
-  geom_point()
+  geom_point() +
+  geom_abline(slope = 1, linetype = 2)
 
 
 
