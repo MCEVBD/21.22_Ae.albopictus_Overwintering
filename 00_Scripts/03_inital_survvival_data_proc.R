@@ -30,12 +30,10 @@ library(dplyr)
 
 ######### Import data #######
 setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
-data <- read_csv("00_Data/21.22_section_survival_data.csv",
-                 col_types = cols(dead.hatch1 = col_integer(),dead.hatch2 = col_integer(), dead.hatch3 = col_integer(), dead.hatch4 = col_integer(),
-                                  live.hatch1 = col_integer(), live.hatch2 = col_integer(), live.hatch3 = col_integer(), live.hatch4 = col_integer(),
-                                  sheet = col_factor(levels = c("A", "B", "C")), 
-                                  site = col_factor(levels = c("Spo","Han", "Arl", "Dek", "Bon", "Car")), 
-                                  x = col_number(), y = col_number()))
+data <- read.csv("00_Data/21.22_section_survival_data.csv")
+
+data$site <- factor (data$site, levels = c("Spo","Han","Arl","Dek", "Bon", "Car" ))
+
 
 ########### Extract new variables ###########
 
@@ -78,14 +76,15 @@ data$per.sur.live <- data$total.live /  data$avg.egg
 sheet <- c("A", "B", "C")  # list of sheet names 
 data$rel.per.sur.live <- NA     # emepty varaible 
 for (i in sheet) {
-  data$rel.per.sur.live[data$sheet == i] <- data$per.sur[data$sheet == i] / data$per.sur.live[data$sheet == i  & data$loc.id == "CTR"]
+  data$rel.per.sur.live[data$sheet_id == i] <- data$per.sur[data$sheet_id == i] / data$per.sur.live[data$sheet_id == i  & data$loc.id == "CTR"]
 }
 
 # percent reduction in survial
 data$per.red.live <- NA
-for (i in sheet) {
-  data$per.red.live[data$sheet == i] 
-}
+data$per.red.live[data$sheet_id == "A"] <- (data$per.sur.live[data$sheet_id == "A"  & data$loc.id == "CTR"] - data$per.sur[data$sheet_id == "A"]) / data$per.sur[data$sheet_id == "A"] 
+data$per.red.live[data$sheet_id == "B"] <- (data$per.sur.live[data$sheet_id == "B"  & data$loc.id == "CTR"] - data$per.sur[data$sheet_id == "B"]) / data$per.sur[data$sheet_id == "B"] 
+data$per.red.live[data$sheet_id == "C"] <- (data$per.sur.live[data$sheet_id == "C"  & data$loc.id == "CTR"] - data$per.sur[data$sheet_id == "C"]) / data$per.sur[data$sheet_id == "C"] 
+
 ########### write csv #########
 
 #write.csv(data, "00_Data/21.22_section_survival_data.csv")
@@ -111,9 +110,16 @@ data %>%
   ggplot(aes(site, rel.per.sur.live)) +
   geom_boxplot()
 
+##  percent reduction by site
+### bad value for this data as the 0.0 values make interperation difficult 
+data %>%
+  filter(number != 7) %>%
+  ggplot(aes(site, per.red.live)) +
+  geom_boxplot()
+
 ## relative percent survial by lat
 data %>%
   filter(number != 7) %>%
-  ggplot(aes( x, rel.per.sur.live)) +
+  ggplot(aes( y, rel.per.sur.live)) +
   geom_point()
 

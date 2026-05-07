@@ -8,9 +8,9 @@
 #' Overview
 #' ========
 #' 
-#' Before completing regressions of tire temperature realted to snow. 
+#' Before completing regressions of tire temperature related to snow. 
 #' 
-#' The format of the snow dataframe does not work well for R based analysis. 
+#' The format of the snow data frame does not work well for R based analysis. 
 #' To correct it will require that I split the df and correct each group of 
 #' variables (cover) and (depth)
 #'   The steps:
@@ -48,7 +48,7 @@ dia$Date     <- date(dia$DateTime)
 # snow data
 snow <-  read.csv("00_Data/21.22_all_snow.csv")
 # format corrections
-snow$Date <- mdy(snow$Date)
+snow$Date <- ymd(snow$date)
 
 ##### Narrow snow dataframe ####
 
@@ -161,3 +161,5 @@ snowF <- merge(temp, snowF, by= c( "number", "Date"))
 
 # save new snow file 
 # write.csv(snowF, "00_Data/21.22_snow_temperature.csv")
+
+ 

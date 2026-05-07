@@ -104,10 +104,16 @@ ggplot(envi, aes(DateTime, Tire, col = id)) +
 
 #### Plot pull date v survial ###
 
-ggplot(hth, aes(pull.date, rel.per.sur.live))+
-  geom_point()
+fig <- ggplot(hth, aes(pull.date, rel.per.sur.live))+
+  geom_point() +
+  theme_cowplot() +
+  ylab("Relative Percent Survival") +
+  xlab("Date Removed From Tire")
 
-#' From pull 1 to pull 3 relative survial decreased from ~1.5 to 0. consequently these
+setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/02_Manuscript/Figures")
+ggsave("relsur_datepull.pdf", plot = fig, width = 8, height = 5, units = "in", dpi = 500)
+
+#' From pull 1 to pull 3 relative survival decreased from ~1.5 to 0. consequently these
 #' three time period will be studied to understand the threshold reached that ended
 #'  survival 
 #' 
@@ -131,7 +137,7 @@ key$condition <- as.numeric(key$condition)
 key$conditionF <- as.factor(key$condition)
 #### Intoductory plots ####
 
-ggplot(key, aes(condition,Tire)) +
+ggplot(key, aes(as.factor(condition),Tire)) +
   geom_boxplot()
 
 ggplot(key, aes(DateTime, Tire, col = condition))+

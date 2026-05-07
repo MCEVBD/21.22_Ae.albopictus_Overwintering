@@ -170,7 +170,7 @@ setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/03_figures_presentation/Figures")
 ggsave("cover_violin.pdf", plot = p1, width = 5, height = 5, units = "in", dpi = 500)
 ggsave("cover_bar.pdf",    plot = p2, width = 7, height = 5, units = "in", dpi = 500)
 ggsave("cover_model.pdf",  plot = p3, width = 5, height = 3, units = "in", dpi = 500)
-ggsave("cover_bar_prop.pdf",  plot = p4, width = 5, height = 3, units = "in", dpi = 500)
+ggsave("cover_bar_prop.pdf",  plot = p4, width = 7, height = 3, units = "in", dpi = 500)
 
 
   

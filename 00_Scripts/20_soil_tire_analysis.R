@@ -27,6 +27,8 @@
 #'                        
 #' **7-Nov-22**: regression analysis -> additional varaibles/models created. AIC and LogLik calculated 
 #'                        6. 5. MeanT_Tire ~ MeanT_Soil + (snow_FAC10:cover) + cover **KMS**
+#'                        
+#' **05-Jan-23**: format change, 
 
 
 #libraries
@@ -37,6 +39,7 @@ library(dplyr)
 library(cowplot)
 
 #### Import ####
+setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/21.22_Ae.albopictus_Overwintering")
 
 ## hourly data ( no snow )
 data <- read.csv('00_Data/21.22_temperature.csv')
@@ -57,6 +60,8 @@ dia$location <- factor (dia$location, levels = c("Car", "Bon", "Dek", "Arl", "Ha
 dia          <- filter (dia, Date < "2022-04-14" )
 dia$cover    <- factor (dia$cover, levels = c("none", "side", "top", "both"))
 
+# add factor (100mm bin) snodas variable for analysis
+dia$snow_FAC10 <- cut(dia$snodas, breaks = c(-1, 0,100,200,300,400), labels = c("none", ">100", ">200", ">300", ">400"))
 
 #### Inital Plot ####
 
@@ -106,7 +111,7 @@ c <- ggplot(dia, aes(depth_T, (MeanT_Soil - MeanT_Tire))) +
 d <- ggplot(dia, aes(snow_FAC10, (MeanT_Soil - MeanT_Tire))) +
   geom_boxplot()
 
-plot_grid(a, b,c,d)}
+plot_grid(a, b,c)}
 
 {a <- ggplot(dia, aes(MeanT_Soil, MeanT_Tire, col = snodas )) +
   geom_point()
@@ -128,10 +133,10 @@ plot_grid(a, b,c,d)}
 # Pearson correlation test
 cor.test(dia$MeanT_Tire, dia$MeanT_Soil, method = "pearson")
 
+t.test(data$Soil, data$Tire)
+
 #### Regression ####
 
-# add factor (100mm bin) snodas variable for analysis
-dia$snow_FAC10 <- cut(dia$snodas, breaks = c(-1, 0,100,200,300,400), labels = c("none", ">100", ">200", ">300", ">400"))
 
 model1   <- lm(MeanT_Tire ~ MeanT_Soil, data = dia)
 model2   <- lm(MeanT_Tire ~ MeanT_Soil + snodas, data = dia)
@@ -179,4 +184,6 @@ summary(model6)$r.squared
 #' 
 #' The use of soil temperature instead of air temperature to predict tire temperature is not suggested as the fit of
 #' the lm is lower, particularly for the lm that only contains easily sources macro-varaibles. 
+#' 
+#' 
 #' 

@@ -1,59 +1,22 @@
 #' ---
-#' title: " 11 snow insulation (temperature) glm"
+#' title: "11 snow insulation (temperature) glm"
 #' author: "Katie Susong"
 #' date: "27 May 2022"
 #' ---
-#' 
-#' 
+#'
 #' Overview
 #' =======
-#' 
-#' This data offers the ablity to compair two independent sets of data. In 10_18.19glm_predict.R 
-#' I used the glm from Susong, Tucker et al. 2022 to predict the tire temperature. What I found
-#' was promising. My next set will be to repeat the same glm formula for the 21/22 data.
-#' 
-#' A.  Repeat 18/19 (Susong, Tucker et al. 2022) glm
-#' 
-#' B. Independent model development
-#'     pdf of MeanT_Tire is normal
 #'
-#'   1. Null model (null): MeanT_Tire ~ 1
-#'      - AIC: 15960
-#'      - Diagnostic plots: 
-#'   2. Include MeanT_Ambient (air): MeanT_Tire ~ MeanT_Ambient
-#'      - AIC: 8364.4
-#'      - log Lik.' -4179.184 (df=3)
-#'      - Diagonostic plots: 
-#'   3. Include SNODAS (snow): MeanT_Tire ~ MeanT_Ambient + snow_FAC10
-#'      - AIC: 8086.5
-#'      - 'log Lik.' -4036.231 (df=7)
-#'      - Diagonostic plots: 
-#'   4. air and SNODAS intereaction (snowplus): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10)
-#'      - AIC: 7059
-#'      - 'log Lik.' -3518.48 (df=11)
-#'      - I am questioning the values and the biolgical relevence of including this intereaction. I think that 
-#'     it is creating problems b/c snow and air temp are correlated loosely 
-#'   5. add site as random effect (siteR) :MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site)
-#'      - AIC: 7020.697
-#'      - 'log Lik.' -3498.348 (df=12)
-#'      - ** SELECTED MODEL **
-#'   6. siteR minus air:snow interaction (siteRmin): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (1|site)
-#'      - AIC: 8045.815
-#'      - 'log Lik.' -4014.908 (df=8)
-#'   7. add date to min model (datemin): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + date + (1|site) 
-#'      - AIC:8058.785
-#'      - 'log Lik.' -4020.393 (df=9)
-#'      - **reduced fit**
-#'   8. add date to plus model (dateplus): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + date + (1|site) 
-#'      - AIC:7016.85
-#'      - 'log Lik.' -3495.425 (df=13)
-#'        **minimal fit improvment** compared to snowplus
-#'   9. inlcude lat (lat): MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + y
-#'      - AIC : 8085.64
-#'      - 'log Lik.' -4034.81 (df=8)
-#'        ** model fit NOT improved **
- 
+#' Model selection for tire temperature prediction using the 2021/2022 data.
+#'
+#' This script compares a set of candidate models for mean daily tire temperature using
+#' ambient temperature, categorical SNODAS snow depth bins, and (optionally) site as a
+#' random effect, plus simple extensions (date and latitude).
+
+rm(list = ls())
+
 # Libraries #
+library(AICcmodavg)
 library(lubridate)
 library(dplyr)
 library(lme4)
@@ -70,7 +33,6 @@ data$location <- factor (data$location, levels = c("Car", "Bon", "Dek", "Arl", "
 data          <- filter (data, Date < "2022-04-14" ) # post collection dates
 
 #### Change data(21/22) df format and colnames to match DIA(18/19) df ####
-# b/c the first step is to repeat the 18/19 (Susong, Tucker et al. 2022) glm
 
 # add catagorical snow values @ 100mm bins
 data$snow_FAC10 <- cut(data$snodas, breaks = c(-1, 0,100,200,300,400), labels = c("none", ">100", ">200", ">300", ">400"))
@@ -79,12 +41,69 @@ data <- rename(data, MeanT_Ambient = "MeanT_Air")
 # rename location
 data <- rename(data, site = "location")
 
+#### Distribution plot #### 
+hist(data$MeanT_Tire)
 
-#### Repeat 18/19 (Susong, Tucker et al. 2022) glm ####
-m18.19 <- lmer(MeanT_Tire ~ MeanT_Ambient + relevel(snow_FAC10, ref = 1)+ (1|site), data = data)
+#### Model Creation ####
+
+# Repeat 18/19 model structure (Susong, Tucker et al. 2022)
+m18.19 <- lmer(MeanT_Tire ~ MeanT_Ambient + relevel(snow_FAC10, ref = "none") + (1|site), data = data)
+
+#### Independent regression development ####
+
+#### 1. Null model ####
+null <- glm(MeanT_Tire ~ 1, data = data)
+
+#### 2. Air ####
+air <- glm(MeanT_Tire ~ MeanT_Ambient, data = data)
+
+#### 3. Snow ####
+snow <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10, data = data)
+
+#### 4. Snow + air interaction ####
+snowplus <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + MeanT_Ambient:snow_FAC10, data = data)
+
+#### 5. Add site as random effect ####
+siteR <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = data)
+
+#### 6. Random effect without interaction ####
+siteRmin <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 +  (1|site), data = data)
+
+#### 7. Add date ####
+datemin <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + Date + (1|site), data = data)
+
+#### 8. Add date to interaction model ####
+dateplus <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + Date + (1|site), data = data)
+
+#### 9. Include latitude (uses `y` column) ####
+lat <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + y, data = data)
+
+#### Summaries / Tables ####
 summary(m18.19)
 tab_model(m18.19)
-plot(m18.19)
+
+summary(null)
+summary(air)
+summary(snow)
+summary(snowplus)
+
+summary(siteR)
+summary(siteRmin)
+summary(datemin)
+summary(dateplus)
+
+summary(lat)
+
+#### Selection (AIC tables) ####
+models_noR <- list(null, air, snow, snowplus, lat)
+model.names_noR <- c("null", "air", "snow", "snowplus", "lat")
+aictab(cand.set = models_noR, modnames = model.names_noR)
+
+models_R <- list(m18.19, siteR, siteRmin, datemin, dateplus)
+model.names_R <- c("m18.19", "siteR", "siteRmin", "datemin", "dateplus")
+aictab(cand.set = models_R, modnames = model.names_R)
+
+#### Figures ####
 plot_model(m18.19,
            title = "",
            axis.labels = c("Snow, >300 mm","Snow, 200-299 mm","Snow, 100-199 mm",
@@ -95,72 +114,3 @@ plot_model(m18.19,
   theme_linedraw() +
   geom_vline(xintercept = 0) +
   theme(text = element_text(size = 15, family="Arial"))  
-
-#### Independed regression development ####
-
-hist(data$MeanT_Tire)
-#### 1.Null model ####
-null <- glm(MeanT_Tire ~ 1, data = data)
-summary(null)
-plot(null)
-
-#### 2.Air ####
-air <- glm(MeanT_Tire ~ MeanT_Ambient, data = data)
-summary(air)
-logLik(air)
-plot(air)
-
-#### 3.snow ####
-snow <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10, data=data)
-summary(snow)
-logLik(snow)
-plot(air)
-plot_model(snow)
-
-#### 4.snowplus ####
-snowplus <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + MeanT_Ambient:snow_FAC10, data=data)
-summary(snowplus)
-logLik(snowplus)
-plot(snowplus)
-tab_model(snowplus)
-plot_model(snowplus)
-anova(snow, snowplus)
-
-#### 5.siteR ####
-siteR <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = data)
-summary(siteR)
-AIC(siteR)
-logLik(siteR)
-tab_model(siteR)
-plot_model(siteR)
-
-plot_models(siteR, siteRmin)
-
-#### siteRmin ####
-siteRmin <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 +  (1|site),data= data)
-summary(siteRmin)
-AIC(siteRmin)
-logLik(siteRmin)
-tab_model(siteRmin)
-plot_model(siteRmin)
-
-
-#### datemin ####
-datemin <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + Date + (1|site) , data = data)
-summary(datemin)
-AIC(datemin)
-logLik(datemin)
-
-#### dateplus ####
-dateplus <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10)+ Date + (1|site), data = data)
-summary(dateplus)
-AIC(dateplus)
-logLik(dateplus)
-plot_model(dateplus)
-
-#### lat ####
-lat <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + y, data= data)
-summary(lat)
-AIC(lat)
-logLik(lat)
-plot_model(lat)

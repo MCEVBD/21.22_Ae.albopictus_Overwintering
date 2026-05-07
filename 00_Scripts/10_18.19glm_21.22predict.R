@@ -19,6 +19,7 @@
 
 # Libraries #
 library(lubridate)
+library(tidyr)
 library(dplyr)
 library(lme4)
 library(ggplot2)

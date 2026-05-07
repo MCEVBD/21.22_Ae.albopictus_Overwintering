@@ -31,6 +31,11 @@ library(lubridate)
 obs.snow <- read.csv("00_Data/21.22_snowdepth.csv")
 # correct date structure
 obs.snow$date <- mdy(obs.snow$date)
+# correct units 
+obs.snow$depth_Etire <- obs.snow$depth_Etire * 10
+obs.snow$depth_G     <- obs.snow$depth_G * 10
+obs.snow$depth_Wtire <- obs.snow$depth_Wtire  * 10
+obs.snow$depth_Stire <- obs.snow$depth_Stire  * 10
 
 #SNODAS data 
 snodas <- read.csv("00_Data/21.22_SNODAS.csv")

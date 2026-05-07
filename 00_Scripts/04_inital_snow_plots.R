@@ -13,6 +13,7 @@
 # libraries
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 library(lubridate)
 
 ######## Import and format Data ############
@@ -22,22 +23,13 @@ snow <- read.csv("00_Data/21.22_all_snow.csv")
 # correct str 
 snow$date <- ymd(snow$date)
 
-
-#on site measurements are in cm and need to be changed to mm
-#snow$depth_Etire <- snow$depth_Etire * 10
-#snow$depth_G     <- snow$depth_G * 10
-#snow$depth_Wtire <- snow$depth_Wtire  * 10
-#snow$depth_Stire <- snow$depth_Stire  * 10
-
-# write .csv with corrected units
-# write.csv(snow, "00_Data/21.22_all_snow.csv")
-
 # inital investigation plots
 
 ## GROUND DEPTH v. SNODAS
 ggplot(snow, aes(depth_G, snow_depth))+
   geom_point() + 
   geom_abline(slope = 1, intercept = 0) + 
+  facet_wrap(~location) +
   ylim(0,400)
 # HISTOGRAM: GOUND DEPTH
 hist(snow$depth_G)
@@ -73,33 +65,45 @@ snow_p <- pivot_longer(snow,cols = c(starts_with("depth"), "snow_depth"),
                      names_to = "measure",
                      values_to = "depth")
 
-
 # add ground/tire varaible 
-snow$loc.GT <- substr(snow$measure, 7,7)
-snow$loc.GT [snow$loc.GT == "e"] <- "G"
-snow$loc.GT [snow$loc.GT == "W"] <- "Ti"
-snow$loc.GT [snow$loc.GT == "E"] <- "Ti"
-snow$loc.GT [snow$loc.GT == "S"] <- "Ti"
-snow$loc.GT <- as.factor(snow$loc.GT)
+snow_p$loc.GT <- substr(snow_p$measure, 7,7)
+snow_p$loc.GT [snow_p$loc.GT == "e"] <- "G"
+snow_p$loc.GT [snow_p$loc.GT == "W"] <- "Ti"
+snow_p$loc.GT [snow_p$loc.GT == "E"] <- "Ti"
+snow_p$loc.GT [snow_p$loc.GT == "S"] <- "Ti"
+snow_p$loc.GT <- as.factor(snow_p$loc.GT)
 
 # add measure.type variable
-snow$measure.type <- "onsite"
-snow$measure.type[snow$measure == "snow_depth"] <- "SNODAS"
-snow$measure.type <- as.factor(snow$measure.type)
+snow_p$measure.type <- "onsite"
+snow_p$measure.type[snow_p$measure == "snow_depth"] <- "SNODAS"
+snow_p$measure.type <- as.factor(snow_p$measure.type)
 
 
+# summary values 
+
+Jan_avg_tire <- snow_p %>%
+  filter(between(date, as.Date('2021-12-31'), as.Date('2022-02-01'))) %>%
+  group_by(location,  measure) %>%
+  summarise(mean = mean(depth, na.rm = T),
+            sd = sd(depth, na.rm = T))
+Jan_avg_loc <- snow_p %>%
+  filter(between(date, as.Date('2021-12-31'), as.Date('2022-02-01'))) %>%
+  group_by(location) %>%
+  summarise(mean = mean(depth, na.rm = T),
+            sd = sd(depth, na.rm = T))
 
 # Plot 
 
-snow %>%
+snow_p %>%
   filter(loc.GT == "G") %>%
   ggplot( aes(date,depth, col= measure.type)) + 
   geom_line()+
   facet_wrap(~location)
 
-snow %>%
+snow_p %>%
   filter(loc.GT == "G") %>%
   filter(location == "Spo") %>%
   ggplot( aes(date,depth, col= measure.type)) + 
   geom_line()
 
+?filter()

@@ -1,5 +1,5 @@
 #' ---
-#' title: " 13 compare glm Snow and tmeperature analysis"
+#' title: " 13 compare glm Snow and temperatuer analysis"
 #' author: "Katie Susong"
 #' date: "01 June 2022"
 #' ---
@@ -10,11 +10,11 @@
 #' Comparison of the three glms generated from the 18/19, 21/22 data and a combine df
 #' 
 #' To do this the 21/22 data needs a few format adjustment to match 18/19 data. 
-#' The format changes are lsited below:
+#' The format changes are listed below:
 #'    1. Factor of SNOWDAS created  
-#'    2. remane MeanT_Air to MeanT_Ambient
+#'    2. rename MeanT_Air to MeanT_Ambient
 #'    3. rename location to site (NOTE: in 18/19 study 3 tires where at 3 sites per location
-#'    where as in 21/22 all tires were located at a sigle site at each location. As such "site" 
+#'    where as in 21/22 all tires were located at a single site at each location. As such "site" 
 #'    from 18/19 is best reflected by "location" in 21/22)
 #'    4. Date changed to date
 #'    
@@ -37,6 +37,9 @@
 #'           -
 #'           -
 #'         
+
+rm (list  = ls())
+
 
 # Libraries #
 library(lubridate)
@@ -110,9 +113,9 @@ holdout =both[-picked,]
 
 #### generate models ####
 
-m18.19 <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = DIA)
-m21.22 <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = data)
-m.all  <- lmer(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) + (1|site), data = development)
+m18.19 <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) , data = DIA)
+m21.22 <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) , data = data)
+m.all  <- glm(MeanT_Tire ~ MeanT_Ambient + snow_FAC10 + (MeanT_Ambient*snow_FAC10) , data = development)
 
 #### test overdispersal ####
 
@@ -121,15 +124,39 @@ overdisp_fun(m18.19)
 overdisp_fun(m21.22)
 overdisp_fun(m.all)
 
-#### Generate predict on single df ####
+#### Generate predict on holdout df ####
 
 holdout$m18.19 <- predict(m18.19, holdout, type = "response",allow.new.levels = T)
 holdout$m21.22 <- predict(m21.22, holdout, type = "response",allow.new.levels = T)
 holdout$m.all  <- predict(m.all,  holdout, type = "response",allow.new.levels = T)
 
+#### Generate predict on all df ####
+
+both$m18.19 <- predict(m18.19, both, type = "response",allow.new.levels = T)
+both$m21.22 <- predict(m21.22, both, type = "response",allow.new.levels = T)
+both$m.all  <- predict(m.all,  both, type = "response",allow.new.levels = T)
+
 #### Compare model estimates ####
 
-plot_models(m18.19, m21.22, m.all, show.intercept = T, show.p = T)
+fig1 <- plot_models(m18.19, m21.22, m.all, title = "",
+            axis.labels = c("Mean Ambient temperature * Snow, >300 mm",
+                            "Mean Ambient temperature* Snow, 200-299 mm",
+                            "Snow * Mean Ambient temperature, 100-199 mm",
+                            "Snow * Mean Ambient temperature, 1-99 mm",
+                            "Snow, >300 mm","Snow, 200-299 mm","Snow, 100-199 mm",
+                            "Snow, 1-99 mm","Mean Ambient temperature", "Intercept"),
+            show.intercept = T,
+            vline.color = "grey70") +
+  theme_linedraw() +
+  geom_vline(xintercept = 0) +
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=14,face="bold")) +
+  labs(color = "Regression") +
+  scale_color_discrete(labels=c('Mixed','2021/2022','2018/2019'))
+
+# save high res. version of plot
+setwd("~/Documents/CBS_PhD/Ae.albo_OW_2021/03_figures_presentation/Figures")
+ggsave("compare_models_forest.pdf", plot = fig1, width = 10, height = 5, units = "in", dpi = 500)
 
 ggplot(holdout, aes(MeanT_Tire, m18.19))+
   geom_point(col = "blue") +
@@ -137,5 +164,6 @@ ggplot(holdout, aes(MeanT_Tire, m18.19))+
   geom_point(aes(MeanT_Tire, m.all)) +
   facet_wrap(~snow_FAC10) +
   ylab("predicted T (C??)")
+
 
 

@@ -3,6 +3,15 @@
 .RData
 .Ruserdata
 .DS_Store
-# RAW data files 
+**/.DS_Store
+
+# Ignore pre-edit/raw working directory
+00_Data_13_JAN_preedit!/
+
+# Office temp files
+~$*.xlsx
+**/~$*.xlsx
+
+# RAW data files (kept out of repo)
 00_Data/01_RAW_Snowdepth/
 00_Data/01_RAW_temperature/
