@@ -4,7 +4,12 @@
 
 This repository contains the data and analysis scripts for a field study of overwintering survival of *Aedes albopictus* (Asian tiger mosquito) eggs during the 2021–22 winter season. Eggs were deployed on paper sheets inside scrap tires at six field sites along a north–south latitudinal gradient in Illinois and Wisconsin, USA. The study investigates how microclimate temperature (inside tires, soil, and ambient air), snow depth, and snow cover relate to egg hatch and survival, and tests the predictive ability of a mixed-effects model previously fit on 2018–19 data (Susong, Tucker et al. 2022).
 
+This work builds on the methods and findings of the prior 2018–19 overwintering study:
+
+> Susong KM, Tucker BJ, Conley AK, Bartholomay LC. Snow-Covered Tires Generate Microhabitats That Enhance Overwintering Survival of *Aedes albopictus* (Diptera: Culicidae) in the Midwest, USA. *Environmental Entomology*. 2022;51(3):586–594. doi:[10.1093/ee/nvac023](https://doi.org/10.1093/ee/nvac023). PMID: [35552675](https://pubmed.ncbi.nlm.nih.gov/35552675/).
+
 **Author:** Katie M. Susong
+**Last modified:** May 2026
 
 ---
 
@@ -20,7 +25,6 @@ This repository contains the data and analysis scripts for a field study of over
 | `21.22_temperature_Arl3.csv` | Hourly temperature data subset for the Arlington tire 3 staggered-removal sections; includes pull-date, sheet identity, and condition columns to track the sequential egg-sheet retrieval experiment. |
 | `21.22_snowdepth.csv` | Daily field-measured snow depth by location; includes ground depth, tire-level depth (east, west, south), and categorical snow-on-tire flags (top, side) for each tire orientation. |
 | `21.22_SNODAS.csv` | Daily SNODAS-modeled snow depth extracted at each study-site location (October 2021 – April 2022). |
-| `21.22_SNODAS 12_jan_NOEDIT.csv` | Archival copy of the SNODAS snow-depth extraction; preserved as a reference snapshot and should not be edited. |
 | `21.22_all_snow.csv` | Combined daily snow-depth file merging field-measured depth, SNODAS-modeled depth, and site location metadata (network, city, state, coordinates). |
 | `21.22_snow_temperature.csv` | Daily mean, minimum, and maximum air, tire, and soil temperatures merged with SNODAS snow depth, on-site snow depth, tire-level cover categories, and site coordinates. |
 | `21.22_studysite_location.csv` | Lookup table of the six study sites with network affiliation, city, state, and geographic coordinates. |
@@ -46,7 +50,7 @@ This repository contains the data and analysis scripts for a field study of over
 | `study_location.qpj` | QGIS projection sidecar (WGS 84, EPSG:4326). |
 | `study_location.cpg` | Character encoding declaration (UTF-8). |
 
-> **Note:** Raw temperature logger files (HOBO CSVs) and raw SNODAS snow-depth rasters are excluded from the repository via `.gitignore` and are not included in this deposit.
+> **Note:** Raw HOBO temperature logger CSVs (`00_Data/01_RAW_temperature/`) and raw field snow-depth records (`00_Data/01_RAW_Snowdepth/`) are excluded from the repository via `.gitignore`. The processed and formatted versions of these data are included as the CSV files listed above. Raw SNODAS NetCDF rasters were processed on an external drive and are not included; the extracted site-level values are deposited as `21.22_SNODAS.csv`.
 
 ### R Scripts (`00_Scripts/`)
 
@@ -168,12 +172,126 @@ This repository contains the data and analysis scripts for a field study of over
 | `rel.per.sur.live` | Numeric (double) | Relative percent survival, scaled by the mean CTR (laboratory control) survival rate. | `per.sur.live` / mean CTR `per.sur.live`. Dimensionless ratio. | `0` when field survival is zero. |
 | `per.red.live` | Numeric (double) | Percent reduction in survival relative to the laboratory control. | Derived from the difference between control and field survival rates. Dimensionless. | `Inf` when field survival is zero and the formula produces a division by zero. |
 
+---
+
+## Column-Level Metadata for `21.22_temperature.csv`
+
+Hourly sensor readings across all sites. 64,414 rows, 23 columns. `NA` values occur where a sensor type was not deployed for a given tire orientation (see notes below).
+
+| Column | Data Type | Description | Units / Coding | Missing Values |
+|--------|-----------|-------------|----------------|----------------|
+| *(first column, unnamed)* | Integer | R-exported row index. | Sequential integer. | No missing values. |
+| `location` | Categorical | Study site abbreviation. | `Arl`, `Bon`, `Car`, `Dek`, `Han`, `Spo`. | No missing values. |
+| `number` | Integer | Numeric site–tire identifier. | `1`–`13`. | No missing values. |
+| `ABC` | Categorical | Tire orientation. | `E` = east-facing; `W` = west-facing; `S` = south-facing (Arlington T3 only). | No missing values. |
+| `DateTime` | DateTime | Date and hour of the observation. | `YYYY-MM-DD HH:MM:SS`, hourly intervals. | No missing values. |
+| `Air_Temp` | Numeric | Ambient air temperature from the nearest weather station. | Degrees Celsius (°C). | `NA` when station data was unavailable for that hour. |
+| `Tire` | Numeric | Internal tire temperature from the primary in-tire probe. | °C. | `NA` for west-facing (W) tires, which use `Tire_b` instead. |
+| `Tire_b` | Numeric | Internal tire temperature from the tire-base probe. | °C. | `NA` for east-facing (E) and south-facing (S) tires, which use `Tire` instead. |
+| `Soil` | Numeric | Soil temperature from a probe buried near the tire base. | °C. | `NA` at sites or orientations where no soil probe was deployed. |
+| `RH` | Numeric | Ambient relative humidity from the weather station. | Percent (%). | `NA` when station data was unavailable. |
+| `Tire_RH` | Numeric | Relative humidity inside the tire. | Percent (%). | `NA` for west-facing tires and where in-tire humidity was not recorded. |
+| `Solar` | Numeric | Solar radiation from the weather station. | W/m². | `NA` when station data was unavailable. |
+| `pcpn` | Numeric | Hourly precipitation from the weather station. | mm. | `NA` when station data was unavailable. |
+| `dwpt` | Numeric | Dew point temperature from the weather station. | °C. | `NA` when station data was unavailable. |
+| `wdir` | Numeric | Wind direction from the weather station. | Degrees (0–360). | `NA` when station data was unavailable. |
+| `wspd` | Numeric | Mean wind speed from the weather station. | m/s. | `NA` when station data was unavailable. |
+| `wspd_max` | Numeric | Maximum wind gust speed. | m/s. | `NA` when station data was unavailable. |
+| `wstdv` | Numeric | Standard deviation of wind speed. | m/s. | `NA` when station data was unavailable. |
+| `Diff` | Numeric | Tire–air temperature difference (`Tire` − `Air_Temp`). | °C. | `NA` when `Tire` is `NA`. |
+| `Diff.S` | Numeric | Soil–air temperature difference (`Soil` − `Air_Temp`). | °C. | `NA` when `Soil` is `NA`. |
+| `Diff.ST` | Numeric | Soil–tire temperature difference (`Soil` − `Tire`). | °C. | `NA` when either `Soil` or `Tire` is `NA`. |
+| `Diff.RH` | Numeric | Tire–ambient humidity difference (`Tire_RH` − `RH`). | Percentage points. | `NA` when either humidity value is `NA`. |
+| `Diff.b` | Numeric | Tire-base–air temperature difference (`Tire_b` − `Air_Temp`). | °C. | `NA` when `Tire_b` is `NA`. |
+
+**Sensor placement note:** East-facing (E) and south-facing (S) tires recorded `Tire` (primary in-tire probe); west-facing (W) tires recorded `Tire_b` (tire-base probe). Each column is `NA` for the orientation it does not serve. The `Soil` probe was deployed at a subset of sites.
+
+---
+
+## Column-Level Metadata for `21.22_snowdepth.csv`
+
+Daily field-measured snow depth at each study site. 1,162 rows, 13 columns.
+
+| Column | Data Type | Description | Units / Coding | Missing Values |
+|--------|-----------|-------------|----------------|----------------|
+| `date` | Date | Date of the snow measurement. | `M/D/YY` format (e.g., `10/6/21`). | No missing values. |
+| `location` | Categorical | Study site abbreviation. | `Arl`, `Bon`, `Car`, `Dek`, `Han`, `Spo`. | No missing values. |
+| `CAMERA` | Categorical | Whether a trail camera was operational at the site on that date. | `T` = camera active; blank = camera not active or not deployed. | Blank when camera was not active. |
+| `depth_G` | Numeric | Ground-level snow depth measured at the site. | mm. | Blank on days when no measurement was taken. |
+| `depth_Etire` | Numeric | Snow depth at the east-facing tire. | mm. | Blank on days when no measurement was taken. |
+| `depth_Wtire` | Numeric | Snow depth at the west-facing tire. | mm. | Blank on days when no measurement was taken. |
+| `top_Etire` | Categorical | Whether snow was present on the top of the east-facing tire. | `y` = yes; `n` = no. | Blank or `NA` on days when no observation was made. |
+| `side_Etire` | Categorical | Whether snow was present on the side of the east-facing tire. | `y` = yes; `n` = no. | Blank or `NA` on days when no observation was made. |
+| `top_Wtire` | Categorical | Whether snow was present on the top of the west-facing tire. | `y` = yes; `n` = no. | Blank on days when no observation was made. |
+| `side_Wtire` | Categorical | Whether snow was present on the side of the west-facing tire. | `y` = yes; `n` = no. | Blank on days when no observation was made. |
+| `depth_Stire` | Numeric | Snow depth at the south-facing tire (Arlington only). | mm. | Blank for all non-Arlington sites (no south-facing tire). |
+| `top_Stire` | Categorical | Whether snow was present on the top of the south-facing tire. | `y` = yes; `n` = no. | Blank for all non-Arlington sites. |
+| `side_Stire` | Categorical | Whether snow was present on the side of the south-facing tire. | `y` = yes; `n` = no. | Blank for all non-Arlington sites. |
+
+**Note on blank cells:** Blank cells in depth columns indicate that a measurement was not taken on that date (e.g., no site visit). Blank cells in the south-facing tire columns (`depth_Stire`, `top_Stire`, `side_Stire`) for non-Arlington sites indicate that no south-facing tire was present at those locations.
+
+---
+
+## Column-Level Metadata for `21.22_snow_temperature.csv`
+
+Daily aggregated temperature and snow data for each site–tire combination. 2,506 rows, 25 columns.
+
+| Column | Data Type | Description | Units / Coding | Missing Values |
+|--------|-----------|-------------|----------------|----------------|
+| *(first column, unnamed)* | Integer | R-exported row index. | Sequential integer. | No missing values. |
+| `number` | Integer | Numeric site–tire identifier. | `1`–`13`. | No missing values. |
+| `Date` | Date | Date of the observation. | `YYYY-MM-DD`. | No missing values. |
+| `MeanT_Air` | Numeric | Daily mean ambient air temperature. | °C. | `NA` when station data was unavailable. |
+| `MeanT_Tire` | Numeric | Daily mean in-tire temperature. | °C. | `NA` when tire sensor data was unavailable. |
+| `MeanT_Soil` | Numeric | Daily mean soil temperature. | °C. | `NA` at sites or orientations without a soil probe. |
+| `MinT_Air` | Numeric | Daily minimum ambient air temperature. | °C. | `NA` when station data was unavailable. |
+| `MinT_Tire` | Numeric | Daily minimum in-tire temperature. | °C. | `NA` when tire sensor data was unavailable. |
+| `MinT_Soil` | Numeric | Daily minimum soil temperature. | °C. | `NA` at sites or orientations without a soil probe. |
+| `MaxT_Air` | Numeric | Daily maximum ambient air temperature. | °C. | `NA` when station data was unavailable. |
+| `MaxT_Tire` | Numeric | Daily maximum in-tire temperature. | °C. | `NA` when tire sensor data was unavailable. |
+| `MaxT_Soil` | Numeric | Daily maximum soil temperature. | °C. | `NA` at sites or orientations without a soil probe. |
+| `MeanT_Diff` | Numeric | Daily mean tire–air temperature difference. | °C. | `NA` when either temperature is `NA`. |
+| `MinT_Diff` | Numeric | Daily minimum tire–air temperature difference. | °C. | `NA` when either temperature is `NA`. |
+| `MaxT_Diff` | Numeric | Daily maximum tire–air temperature difference. | °C. | `NA` when either temperature is `NA`. |
+| `location` | Categorical | Study site abbreviation. | `Arl`, `Bon`, `Car`, `Dek`, `Han`, `Spo`. | No missing values. |
+| `depth_G` | Numeric | Ground-level field-measured snow depth. | mm. | Blank on days when no measurement was taken. |
+| `snodas` | Numeric | SNODAS-modeled snow depth at the site. | mm. | No missing values. |
+| `depth_T` | Numeric | Field-measured snow depth at the tire. | mm. | Blank on days when no measurement was taken. |
+| `cover_T` | Categorical | Whether snow cover was observed on the tire. | `y` = yes; `n` = no. | Blank on days when no observation was made. |
+| `cover_S` | Categorical | Whether snow cover was observed on the side of the tire. | `y` = yes; `n` = no. | Blank on days when no observation was made. |
+| `x` | Numeric (double) | Longitude of the study site. | Decimal degrees, WGS 84 (EPSG:4326). Negative = west. | No missing values. |
+| `y` | Numeric (double) | Latitude of the study site. | Decimal degrees, WGS 84 (EPSG:4326). Positive = north. | No missing values. |
+| `ABC` | Categorical | Tire orientation. | `E` = east; `W` = west; `S` = south. | No missing values. |
+| `cover` | Categorical | Combined snow-cover category for the tire. | `none` = no snow on tire; `top` = snow on top only; `side` = snow on side only; `both` = snow on top and side. | Blank on days when no observation was made. |
+
+---
+
+## Column-Level Metadata for `21.22_1990-2010_JANavg_normal.csv`
+
+PRISM 1990–2010 January mean temperature normals. 6 rows, 1 column. One value per study site, ordered from southernmost to northernmost.
+
+| Column | Data Type | Description | Units / Coding | Missing Values |
+|--------|-----------|-------------|----------------|----------------|
+| `PRISM_tmea` | Numeric | Long-term (1990–2010) PRISM January mean air temperature normal for each study site. | °C. | No missing values. |
+
+---
+
 ### Notes on Missing Values
 
-- **`NA`** (R-style missing value) appears in the `site`, `sheet_id`, `x`, and `y` columns for CTR (laboratory control) rows. The control eggs were maintained under laboratory conditions and were not deployed at a field site, so site name and geographic coordinates are not applicable.
+**In `21.22_section_survival_data.csv`:**
+- **`NA`** appears in the `site`, `sheet_id`, `x`, and `y` columns for CTR (laboratory control) rows. The control eggs were maintained under laboratory conditions and were not deployed at a field site, so site name and geographic coordinates are not applicable.
 - **Empty string** (`""`) appears in the `tire_num` column for CTR rows, as no tire was used in the laboratory control.
 - **`Inf`** (positive infinity) appears in the `rel.per.sur.live` and `per.red.live` columns when the survival formula involves division by zero (i.e., when field survival is zero).
 - **`0`** in hatch count columns (`live.hatch1`–`live.hatch4`, `dead.hatch1`–`dead.hatch4`) indicates that no live or dead larvae were observed in that hatch attempt. All hatch attempts were conducted; zeros represent the observed outcome, not missing data.
+
+**In `21.22_temperature.csv`:**
+- **`NA`** indicates a sensor was not deployed for that tire orientation or that weather-station data was unavailable for that hour. East-facing and south-facing tires use the `Tire` column (with `Tire_b` as `NA`); west-facing tires use the `Tire_b` column (with `Tire` as `NA`).
+
+**In `21.22_snowdepth.csv`:**
+- **Blank cells** in depth and snow-flag columns indicate that no field measurement or observation was taken on that date. South-facing tire columns (`depth_Stire`, `top_Stire`, `side_Stire`) are blank for all non-Arlington sites because only Arlington had a south-facing tire.
+
+**In `21.22_snow_temperature.csv`:**
+- **`NA`** in temperature columns indicates that sensor data was unavailable (e.g., no soil probe at that site). **Blank cells** in snow-depth and cover columns indicate that no field observation was taken on that date.
 
 ---
 
